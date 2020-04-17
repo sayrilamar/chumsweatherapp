@@ -1,0 +1,13 @@
+.App {
+  margin: 0 auto;
+}
+
+.card {
+  margin: 0 auto;
+  background: linear-gradient(to top, red, pink);
+  width: 200px;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
