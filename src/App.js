@@ -18,7 +18,7 @@ function App() {
   });
 
   const data = async q => {
-    const apiRes = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${q}&units=imperial&APPID=ab0ef440364092f54ff821ca2b803163`);
+    const apiRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${q}&units=imperial&APPID=ab0ef440364092f54ff821ca2b803163`);
     const resJSON = await apiRes.json();
     return resJSON;
   };
