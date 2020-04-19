@@ -39,13 +39,12 @@ const WeatherCard = ({
     margin: 0 auto;
     background: ${bg};
     width: 100%;
-    height: 80%;
+    height: 900px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
     border-radius: 15px;
-    text-align: center;
   `;
 
     return (

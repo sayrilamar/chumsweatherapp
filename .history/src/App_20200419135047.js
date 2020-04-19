@@ -66,17 +66,21 @@ function App() {
           description={weather.description}
           icon={weather.icon}
           feels_like={Math.round(weather.feels_like)}/>
-        <h1>Search for City</h1>
-        <form>
+      </div>
+      <h1>Search for City</h1>
+      <form>
+        <div>
           <input
             className="input"
             value={query}
             onChange={e => setQuery(e.target.value)}/>
+        </div>
+        <div>
           <button className="button" onClick={e => handleSearch(e)}>
             Search
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 }

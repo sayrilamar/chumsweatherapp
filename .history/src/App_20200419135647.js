@@ -1,13 +1,11 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import WeatherCard from "./components/WeatherCard/component.js";
 
 function App() {
   const location = "Atlanta";
-  const [query,
-    setQuery] = useState("");
-  const [weather,
-    setWeather] = useState({
+  const [query, setQuery] = useState("");
+  const [weather, setWeather] = useState({
     temp: null,
     city: null,
     condition: null,
@@ -18,7 +16,9 @@ function App() {
   });
 
   const data = async q => {
-    const apiRes = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${q}&units=imperial&APPID=ab0ef440364092f54ff821ca2b803163`);
+    const apiRes = await fetch(
+      `http://api.openweathermap.org/data/2.5/weather?q=${q}&units=imperial&APPID=ab0ef440364092f54ff821ca2b803163`
+    );
     const resJSON = await apiRes.json();
     return resJSON;
   };
@@ -57,7 +57,7 @@ function App() {
 
   return (
     <div className="App">
-      <div>
+      <button>
         <WeatherCard
           temp={Math.round(weather.temp)}
           condition={weather.condition}
@@ -65,18 +65,20 @@ function App() {
           state={weather.country}
           description={weather.description}
           icon={weather.icon}
-          feels_like={Math.round(weather.feels_like)}/>
+          feels_like={Math.round(weather.feels_like)}
+        />
         <h1>Search for City</h1>
         <form>
           <input
             className="input"
             value={query}
-            onChange={e => setQuery(e.target.value)}/>
+            onChange={e => setQuery(e.target.value)}
+          />
           <button className="button" onClick={e => handleSearch(e)}>
             Search
           </button>
         </form>
-      </div>
+      </button>
     </div>
   );
 }

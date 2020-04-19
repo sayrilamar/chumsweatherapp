@@ -15,7 +15,6 @@ const Location = ({city, state}) => {
   const Country = styled.h3 `
     font-family: "Fira Sans", sans-serif;
     font-size: 1.1rem;
-    text-align: center;
   `;
 
   return (

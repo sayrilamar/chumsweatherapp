@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from "react";
 import "./App.css";
 import WeatherCard from "./components/WeatherCard/component.js";
+import "./config.js";
+
+const api = config.API_KEY;
 
 function App() {
-  const location = "Atlanta";
   const [query,
-    setQuery] = useState("");
+    setQuery] = useState("Austell");
   const [weather,
     setWeather] = useState({
     temp: null,
@@ -13,12 +15,12 @@ function App() {
     condition: null,
     country: null,
     description: null,
-    feels_like: null,
-    icon: null
+    feels_like: null
   });
 
   const data = async q => {
-    const apiRes = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${q}&units=imperial&APPID=ab0ef440364092f54ff821ca2b803163`);
+    console.log(config.API_KEY);
+    const apiRes = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${q}&units=imperial&APPID=${api}`);
     const resJSON = await apiRes.json();
     return resJSON;
   };
@@ -33,8 +35,7 @@ function App() {
         condition: res.weather[0].main,
         country: res.sys.country,
         description: res.weather[0].description,
-        feels_like: res.main.feels_like,
-        icon: res.weather[0].icon
+        feels_like: res.main.feels_like
       });
     });
   };
@@ -42,18 +43,17 @@ function App() {
   // runs once the dom is loaded for the first time only, because there is no
   // variable being watched in the dependency array
   useEffect(() => {
-    data(location).then(res => {
+    data(query).then(res => {
       setWeather({
         temp: res.main.temp,
         city: res.name,
         condition: res.weather[0].main,
         country: res.sys.country,
         description: res.weather[0].description,
-        feels_like: res.main.feels_like,
-        icon: res.weather[0].icon
+        feels_like: res.main.feels_like
       });
     });
-  }, [location]);
+  }, []);
 
   return (
     <div className="App">
@@ -64,19 +64,22 @@ function App() {
           city={weather.city}
           state={weather.country}
           description={weather.description}
-          icon={weather.icon}
           feels_like={Math.round(weather.feels_like)}/>
-        <h1>Search for City</h1>
-        <form>
+      </div>
+      <h1>Search for City</h1>
+      <form>
+        <div>
           <input
             className="input"
             value={query}
             onChange={e => setQuery(e.target.value)}/>
+        </div>
+        <div>
           <button className="button" onClick={e => handleSearch(e)}>
             Search
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 }

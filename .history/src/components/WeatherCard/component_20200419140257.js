@@ -39,7 +39,7 @@ const WeatherCard = ({
     margin: 0 auto;
     background: ${bg};
     width: 100%;
-    height: 80%;
+    height: 40%;
     display: flex;
     flex-direction: column;
     justify-content: space-around;

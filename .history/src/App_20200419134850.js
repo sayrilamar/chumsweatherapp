@@ -5,7 +5,7 @@ import WeatherCard from "./components/WeatherCard/component.js";
 function App() {
   const location = "Atlanta";
   const [query,
-    setQuery] = useState("");
+    setQuery] = useState("Austell");
   const [weather,
     setWeather] = useState({
     temp: null,
@@ -42,7 +42,7 @@ function App() {
   // runs once the dom is loaded for the first time only, because there is no
   // variable being watched in the dependency array
   useEffect(() => {
-    data(location).then(res => {
+    data(query).then(res => {
       setWeather({
         temp: res.main.temp,
         city: res.name,
@@ -53,7 +53,7 @@ function App() {
         icon: res.weather[0].icon
       });
     });
-  }, [location]);
+  }, []);
 
   return (
     <div className="App">
@@ -66,17 +66,21 @@ function App() {
           description={weather.description}
           icon={weather.icon}
           feels_like={Math.round(weather.feels_like)}/>
-        <h1>Search for City</h1>
-        <form>
+      </div>
+      <h1>Search for City</h1>
+      <form>
+        <div>
           <input
             className="input"
             value={query}
             onChange={e => setQuery(e.target.value)}/>
+        </div>
+        <div>
           <button className="button" onClick={e => handleSearch(e)}>
             Search
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 }

@@ -57,27 +57,27 @@ function App() {
 
   return (
     <div className="App">
-      <div>
-        <WeatherCard
-          temp={Math.round(weather.temp)}
-          condition={weather.condition}
-          city={weather.city}
-          state={weather.country}
-          description={weather.description}
-          icon={weather.icon}
-          feels_like={Math.round(weather.feels_like)}/>
-        <h1>Search for City</h1>
-        <form>
-          <input
-            className="input"
-            value={query}
-            onChange={e => setQuery(e.target.value)}/>
-          <button className="button" onClick={e => handleSearch(e)}>
-            Search
-          </button>
-        </form>
-      </div>
-    </div>
+    <button>
+      <WeatherCard
+        temp={Math.round(weather.temp)}
+        condition={weather.condition}
+        city={weather.city}
+        state={weather.country}
+        description={weather.description}
+        icon={weather.icon}
+        feels_like={Math.round(weather.feels_like)}/>
+      <h1>Search for City</h1>
+      <form>
+        <input
+          className="input"
+          value={query}
+          onChange={e => setQuery(e.target.value)}/>
+        <button className="button" onClick={e => handleSearch(e)}>
+          Search
+        </button>
+      </form>
+    </button>
+  </div> < /div>
   );
 }
 

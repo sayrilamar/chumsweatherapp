@@ -3,9 +3,8 @@ import "./App.css";
 import WeatherCard from "./components/WeatherCard/component.js";
 
 function App() {
-  const location = "Atlanta";
   const [query,
-    setQuery] = useState("");
+    setQuery] = useState("Austell");
   const [weather,
     setWeather] = useState({
     temp: null,
@@ -13,8 +12,7 @@ function App() {
     condition: null,
     country: null,
     description: null,
-    feels_like: null,
-    icon: null
+    feels_like: null
   });
 
   const data = async q => {
@@ -33,8 +31,7 @@ function App() {
         condition: res.weather[0].main,
         country: res.sys.country,
         description: res.weather[0].description,
-        feels_like: res.main.feels_like,
-        icon: res.weather[0].icon
+        feels_like: res.main.feels_like
       });
     });
   };
@@ -42,18 +39,17 @@ function App() {
   // runs once the dom is loaded for the first time only, because there is no
   // variable being watched in the dependency array
   useEffect(() => {
-    data(location).then(res => {
+    data(query).then(res => {
       setWeather({
         temp: res.main.temp,
         city: res.name,
         condition: res.weather[0].main,
         country: res.sys.country,
         description: res.weather[0].description,
-        feels_like: res.main.feels_like,
-        icon: res.weather[0].icon
+        feels_like: res.main.feels_like
       });
     });
-  }, [location]);
+  }, []);
 
   return (
     <div className="App">
@@ -64,19 +60,22 @@ function App() {
           city={weather.city}
           state={weather.country}
           description={weather.description}
-          icon={weather.icon}
           feels_like={Math.round(weather.feels_like)}/>
-        <h1>Search for City</h1>
-        <form>
+      </div>
+      <h1>Search for City</h1>
+      <form>
+        <div>
           <input
             className="input"
             value={query}
             onChange={e => setQuery(e.target.value)}/>
+        </div>
+        <div>
           <button className="button" onClick={e => handleSearch(e)}>
             Search
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 }
