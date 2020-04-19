@@ -32,5 +32,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/register": "^7.9.0",
+    "jsdom-quokka-plugin": "^1.0.15"
   }
 }

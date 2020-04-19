@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css?family=Merriweather|Fira+Sans&display=swap");
+
+.App {
+  margin: 0 auto;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(to top,
+    rgb(255, 0, 255)) h1 {
+    font-weight: bold;
+  }
+
+  .input {
+    background-color: aqua;
+    font-weight: bold;
+    height: 25px;
+    width: 200px;
+    font-size: large;
+  }
+
+  .button {
+    height: fit-content;
+    font-size: large;
+    font-weight: bold;
+    background-color: lightblue
+  }
