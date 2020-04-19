@@ -17,11 +17,11 @@ const Condition = ({temp, condition, description, feels_like}) => {
 
   return (
     <Fragment>
+      <State>{"It is " + description + " outside!"}</State>
       <Temp>
         It is {temp + " "}
         degrees outside, but it actually feels like {feels_like}!
       </Temp>
-      <State>{"It is " + description + " outside!"}</State>
     </Fragment>
   );
 };

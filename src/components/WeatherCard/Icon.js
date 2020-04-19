@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 // https://openweathermap.org/weather-conditions
 const Icon = ({icon}) => {
   const Icon = styled.img `
-    width: 50%;
+    width: 30%;
   `;
 
   return (<Icon src={`http://openweathermap.org/img/wn/${icon}.png`} alt="Weather Icon"/>);

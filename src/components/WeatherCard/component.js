@@ -50,7 +50,7 @@ const WeatherCard = ({
 
     return (
         <Card>
-            <h2>Hi Chum! Here is your weather forcast for today!</h2>
+            <h2>Hey Chum! Here's your forcast for...</h2>
             <Location city={city} state={state}/>
             <Icon condition={condition} icon={icon}/>
             <Condition
@@ -58,6 +58,7 @@ const WeatherCard = ({
                 condition={condition}
                 description={description}
                 feels_like={feels_like}/>
+            created by daddy!
         </Card>
     );
 };

@@ -36,6 +36,11 @@ function App() {
         feels_like: res.main.feels_like,
         icon: res.weather[0].icon
       });
+    }).catch(e => {
+      alert("Check Your Spelling... Enter a valid city!");
+      window
+        .location
+        .reload(true);
     });
   };
 
@@ -58,6 +63,19 @@ function App() {
   return (
     <div className="App">
       <div>
+        <h1>Search for City</h1>
+        <form>
+          <input
+            className="input"
+            value={query}
+            onChange={e => setQuery(e.target.value)}/>
+          <div></div>
+          <button className="button" onClick={e => handleSearch(e)}>
+            Search
+          </button>
+        </form>{" "}
+        <hr></hr>
+        <hr></hr>
         <WeatherCard
           temp={Math.round(weather.temp)}
           condition={weather.condition}
@@ -66,16 +84,6 @@ function App() {
           description={weather.description}
           icon={weather.icon}
           feels_like={Math.round(weather.feels_like)}/>
-        <h1>Search for City</h1>
-        <form>
-          <input
-            className="input"
-            value={query}
-            onChange={e => setQuery(e.target.value)}/>
-          <button className="button" onClick={e => handleSearch(e)}>
-            Search
-          </button>
-        </form>
       </div>
     </div>
   );
