@@ -3,7 +3,7 @@ import "./App.css";
 import WeatherCard from "./components/WeatherCard/component.js";
 
 function App() {
-  const location = "Atlanta";
+  const location = "Austell";
   const [query,
     setQuery] = useState("");
   const [weather,
