@@ -37,5 +37,13 @@
   "devDependencies": {
     "@babel/register": "^7.9.0",
     "jsdom-quokka-plugin": "^1.0.15"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/index.js",
+      "!src/serviceWorker.js",
+      "!src/**/*.test.js"
+    ]
   }
 }
