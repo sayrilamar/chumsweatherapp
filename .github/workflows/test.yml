@@ -1,0 +1,52 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run tests with coverage
+        run: CI=true yarn test --coverage --watchAll=false
+
+      # qi-signal-emission.instructions.md: publish a QI outcome payload at
+      # the end of every test run, per .assert-iq/signal-schema.json and the
+      # sink configured in .assert-iq/config.yaml > signals.sink (file, under
+      # ./.assert-iq/runs/). Required fields only: run_id, commit_sha,
+      # maturity_tier, plus branch/pr_id for context. No stack traces or
+      # secrets are included.
+      - name: Emit QI outcome signal
+        if: always()
+        run: |
+          mkdir -p .assert-iq/runs
+          cat > ".assert-iq/runs/${{ github.run_id }}.json" <<EOF
+          {
+            "run_id": "${{ github.run_id }}",
+            "commit_sha": "${{ github.sha }}",
+            "branch": "${{ github.ref_name }}",
+            "pr_id": ${{ github.event.pull_request.number && format('"{0}"', github.event.pull_request.number) || 'null' }},
+            "maturity_tier": "mid"
+          }
+          EOF
+
+      - name: Upload QI signal artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qi-signal-${{ github.run_id }}
+          path: .assert-iq/runs/
+          retention-days: 30
