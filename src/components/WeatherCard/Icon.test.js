@@ -8,8 +8,8 @@ import React from "react";
 import { render } from "@testing-library/react";
 import Icon from "./Icon";
 
-test("renders an image pointing at the OpenWeatherMap icon URL", () => {
+test("renders a high-resolution image pointing at the OpenWeatherMap icon URL", () => {
   const { getByAltText } = render(<Icon icon="01d" />);
   const img = getByAltText("Weather Icon");
-  expect(img).toHaveAttribute("src", "http://openweathermap.org/img/wn/01d.png");
+  expect(img).toHaveAttribute("src", "http://openweathermap.org/img/wn/01d@2x.png");
 });

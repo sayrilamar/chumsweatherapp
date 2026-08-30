@@ -8,12 +8,11 @@ import React from "react";
 import { render } from "@testing-library/react";
 import Condition from "./Condition";
 
-test("renders the description and both temperature values", () => {
+test("renders the temperature, description, and feels-like values", () => {
   const { getByText } = render(
     <Condition temp={75} condition="Clear" description="clear sky" feels_like={73} />
   );
-  expect(getByText(/It is clear sky outside!/i)).toBeInTheDocument();
-  expect(
-    getByText(/It is 75 degrees outside, but it actually feels like 73!/i)
-  ).toBeInTheDocument();
+  expect(getByText("It is 75°")).toBeInTheDocument();
+  expect(getByText("clear sky")).toBeInTheDocument();
+  expect(getByText("Feels like 73°")).toBeInTheDocument();
 });

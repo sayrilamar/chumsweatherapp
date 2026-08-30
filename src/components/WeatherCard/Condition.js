@@ -1,27 +1,42 @@
-import React, {Fragment} from "react";
+import React, { Fragment } from "react";
 import styled from "@emotion/styled";
 
-const Condition = ({temp, condition, description, feels_like}) => {
-  const Temp = styled.h1 `
-    font-family: "Fira Sans", sans-serif;
-    font-size: 2rem;
-    font-weight: 200;
-    text-align: center;
-  `;
+const State = styled.p`
+  font-family: "Fira Sans", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #4a4a68;
+  margin: 4px 0 0;
+  text-align: center;
+  text-transform: capitalize;
+`;
 
-  const State = styled.h3 `
-    font-family: "Merriweather", sans-serif;
-    font-size: 1.5rem;
-    text-align: center;
-  `;
+const Temp = styled.p`
+  font-family: "Merriweather", sans-serif;
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1;
+  margin: 4px 0 0;
+  text-align: center;
+`;
 
+const FeelsLike = styled.p`
+  font-family: "Fira Sans", sans-serif;
+  font-size: 0.95rem;
+  color: #6b6b80;
+  margin: 4px 0 0;
+  text-align: center;
+`;
+
+const Condition = ({ temp, condition, description, feels_like }) => {
   return (
     <Fragment>
-      <State>{"It is " + description + " outside!"}</State>
       <Temp>
-        It is {temp + " "}
-        degrees outside, but it actually feels like {feels_like}!
+        It is {temp}
+        {"°"}
       </Temp>
+      <State>{description}</State>
+      <FeelsLike>Feels like {feels_like}{"°"}</FeelsLike>
     </Fragment>
   );
 };

@@ -1,32 +1,64 @@
-@import url("https://fonts.googleapis.com/css?family=Merriweather|Fira+Sans&display=swap");
-
+@import url("https://fonts.googleapis.com/css?family=Merriweather:400,700|Fira+Sans:400,500,600&display=swap");
 
 .App {
-  margin: 0 auto;
-  color: white;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  padding: 8vh 20px 40px;
+  /* background-image is set inline (weather-reactive), but the transition
+     needs to live here since inline style changes don't carry CSS
+     transitions of their own. */
+  transition: background-image 1.2s ease;
+}
+
+.AppContent {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-
-h1 {
-  font-weight: bold;
-  align: center
+.Heading {
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  margin: 0 0 20px;
+  text-align: center;
 }
 
-.input {
-  background-color: aqua;
-  font-weight: bold;
-  height: 25px;
-  width: 50%;
-  font-size: large;
+.SearchForm {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
 }
 
 .button {
-  width: 50%;
-  height: fit-content;
-  font-size: large;
-  font-weight: bold;
-  background-color: lightblue
+  flex-shrink: 0;
+  padding: 14px 22px;
+  font-family: "Fira Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.button:active {
+  transform: scale(0.97);
 }
