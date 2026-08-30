@@ -114,6 +114,19 @@ from coverage via `package.json > jest.collectCoverageFrom`. With that in place:
 the aggregate moved from 54.44% to 100% by excluding files with no app logic, not by lowering
 either threshold.
 
+## Update 2026-08-28 (later): functional test expansion found a real bug
+
+Added true-network-failure, multi-search-sequencing, empty-query, and gradient-integration
+tests (19 tests total, up from 13; still 100% coverage). One of the new tests —
+"a genuine network failure while searching still shows the error path" — surfaced a real,
+previously undiscovered bug: `App.js`'s `handleSearch` fired an extra `data(query)` call purely
+to `console.log` the result, with **no `.catch` at all**. The earlier error-path test only ever
+exercised a *malformed-JSON* failure (fetch resolves 200, body just lacks `main`), which this
+line tolerated fine — only a genuine `fetch()`-level rejection (real network failure) exposed
+the missing handler as an unhandled promise rejection. Fixed by removing the redundant call
+entirely (it was dead debug code, and removing it also stops the app from firing every search
+request to OpenWeatherMap twice).
+
 ## Work-item references
 
 None — `tracker.type = "none"`. No traceability markers exist or are expected.

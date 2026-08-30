@@ -1,13 +1,21 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-// https://openweathermap.org/weather-conditions
-const Icon = ({icon}) => {
-  const Icon = styled.img `
-    width: 30%;
-  `;
+const StyledIcon = styled.img`
+  width: 140px;
+  height: 140px;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+  margin: -12px 0;
+`;
 
-  return (<Icon src={`http://openweathermap.org/img/wn/${icon}.png`} alt="Weather Icon"/>);
+// https://openweathermap.org/weather-conditions
+const Icon = ({ icon }) => {
+  return (
+    <StyledIcon
+      src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
+      alt="Weather Icon"
+    />
+  );
 };
 
 export default Icon;
