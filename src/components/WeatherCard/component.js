@@ -4,6 +4,8 @@ import Location from "./Location";
 import Icon from "./Icon";
 import Condition from "./Condition";
 import LocalTime from "./LocalTime";
+import WeatherDetails from "./WeatherDetails";
+import ForecastStrip from "./ForecastStrip";
 
 const Card = styled.div`
   margin: 28px auto 0;
@@ -39,23 +41,43 @@ const Signature = styled.p`
   margin: 4px 0 0;
 `;
 
-const WeatherCard = ({
-  temp,
-  condition,
-  city,
-  state,
-  description,
-  feels_like,
-  icon,
-  timezone,
-}) => {
+const WeatherCard = ({ weather, forecast }) => {
+  const {
+    temp,
+    condition,
+    city,
+    country,
+    description,
+    feels_like,
+    icon,
+    timezone,
+    windSpeed,
+    windDeg,
+    humidity,
+    pressure,
+    visibility,
+    sunrise,
+    sunset,
+  } = weather;
+
   return (
     <Card>
       <Heading>Hey Chum! Here's your forecast for...</Heading>
-      <Location city={city} state={state} />
+      <Location city={city} state={country} />
       <LocalTime timezoneOffsetSeconds={timezone} />
       <Icon condition={condition} icon={icon} />
       <Condition temp={temp} condition={condition} description={description} feels_like={feels_like} />
+      <WeatherDetails
+        windSpeed={windSpeed}
+        windDeg={windDeg}
+        humidity={humidity}
+        pressure={pressure}
+        visibility={visibility}
+        sunrise={sunrise}
+        sunset={sunset}
+        timezone={timezone}
+      />
+      <ForecastStrip days={forecast} />
       <Signature>created by daddy!</Signature>
     </Card>
   );

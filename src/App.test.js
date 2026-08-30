@@ -32,6 +32,7 @@ const CITY_FIXTURES = {
     icon: "02d",
     temp: 90,
     feels_like: 95,
+    timezone: -14400, // UTC-04:00
   },
   chicago: {
     name: "Chicago",
@@ -41,6 +42,7 @@ const CITY_FIXTURES = {
     icon: "13d",
     temp: 20,
     feels_like: 8,
+    timezone: -18000, // UTC-05:00
   },
 };
 
@@ -55,6 +57,7 @@ const WEATHER_BY_LATLON = {
     icon: "02d",
     temp: 65,
     feels_like: 63,
+    timezone: -18000, // UTC-05:00
   },
 };
 
@@ -70,12 +73,35 @@ const OFFLINE_SENTINEL = "offlinetest";
 function toWeatherJSON(fixture) {
   return {
     name: fixture.name,
-    sys: { country: fixture.country },
+    sys: {
+      country: fixture.country,
+      sunrise: fixture.sunrise ?? Date.UTC(2026, 0, 15, 11, 0, 0) / 1000,
+      sunset: fixture.sunset ?? Date.UTC(2026, 0, 15, 23, 0, 0) / 1000,
+    },
     weather: [{ main: fixture.main, description: fixture.description, icon: fixture.icon }],
-    main: { temp: fixture.temp, feels_like: fixture.feels_like },
-    timezone: fixture.timezone,
+    main: {
+      temp: fixture.temp,
+      feels_like: fixture.feels_like,
+      humidity: fixture.humidity ?? 50,
+      pressure: fixture.pressure ?? 1015,
+    },
+    wind: { speed: fixture.windSpeed ?? 5, deg: fixture.windDeg ?? 180 },
+    visibility: fixture.visibility ?? 10000,
+    timezone: fixture.timezone ?? -18000,
   };
 }
+
+function forecastEntry(dt, tempMin, tempMax, icon, condition) {
+  return { dt, main: { temp_min: tempMin, temp_max: tempMax }, weather: [{ main: condition, icon }] };
+}
+
+// One reusable, deterministic forecast fixture — its exact aggregation
+// behavior is already fully covered by utils/forecast.test.js; here it just
+// needs to prove the data reaches the UI at all.
+const SAMPLE_FORECAST_LIST = [
+  forecastEntry(Date.UTC(2026, 0, 15, 12, 0, 0) / 1000, 70, 80, "01d", "Clear"),
+  forecastEntry(Date.UTC(2026, 0, 16, 12, 0, 0) / 1000, 65, 75, "02d", "Clouds"),
+];
 
 function mockFetchImplementation(url) {
   const urlStr = String(url);
@@ -91,6 +117,10 @@ function mockFetchImplementation(url) {
 
   if (urlStr.includes(OFFLINE_SENTINEL)) {
     return Promise.reject(new Error("network request failed"));
+  }
+
+  if (urlStr.includes("/data/2.5/forecast")) {
+    return Promise.resolve({ json: () => Promise.resolve({ list: SAMPLE_FORECAST_LIST }) });
   }
 
   const latLonMatch = urlStr.match(/[?&]lat=([^&]+)&lon=([^&]+)/);
@@ -144,6 +174,24 @@ test("loads the default city (Austell) weather on initial mount", async () => {
   expect(await findByText("It is 75°")).toBeInTheDocument();
 });
 
+test("displays weather details and a 5-day forecast strip after loading", async () => {
+  const { findByText, getByText } = render(<App />);
+  await findByText("Austell");
+
+  // Weather details: Austell fixture defaults (humidity 50%, pressure 1015
+  // hPa, wind 5 mph, visibility 10000m = 6.2mi) — proves App.js's new
+  // fields (wind/humidity/pressure/visibility) reach WeatherDetails.
+  expect(getByText("50%")).toBeInTheDocument();
+  expect(getByText("1015 hPa")).toBeInTheDocument();
+  expect(getByText("6.2 mi")).toBeInTheDocument();
+
+  // Forecast strip: proves the separate /data/2.5/forecast fetch resolved
+  // and was grouped/rendered — exact aggregation math is covered by
+  // utils/forecast.test.js, not re-verified here.
+  expect(await findByText("Thu")).toBeInTheDocument();
+  expect(await findByText("Fri")).toBeInTheDocument();
+});
+
 test("displays the city's local time and UTC offset from the weather response", async () => {
   jest.spyOn(Date, "now").mockReturnValue(Date.UTC(2026, 0, 15, 12, 0, 0)); // noon UTC
   const { findByText } = render(<App />);
@@ -181,6 +229,47 @@ test("selecting an autocomplete suggestion fetches by lat/lon and displays that 
   // Springfields returned by the geocode fixture above).
   expect(await findByText("Springfield")).toBeInTheDocument();
   expect(await findByText("It is 65°")).toBeInTheDocument();
+});
+
+test("clicking Search after selecting a suggestion (box unedited) re-confirms the same city, not a different lookup", async () => {
+  // Regression test: formatCityLabel("Springfield", "Illinois", "US") is not
+  // a valid OpenWeatherMap name query ("City,ST,US" is expected, not the
+  // full state name) — clicking Search afterward must reuse the selected
+  // city's lat/lon instead of re-parsing that label as a name search.
+  const alertSpy = jest.spyOn(window, "alert").mockImplementation(() => {});
+  const { getByRole, findByText, findByRole } = render(<App />);
+  await findByText("Austell");
+
+  fireEvent.change(getByRole("combobox"), { target: { value: "spring" } });
+  const option = await findByRole("option", { name: /Springfield.*Illinois/i });
+  fireEvent.mouseDown(option);
+  await findByText("It is 65°");
+
+  fireEvent.click(getByRole("button", { name: /search/i }));
+
+  // Give the click's fetch a moment to settle, then confirm it's still the
+  // same, correct city — not an error path or a different lookup.
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  expect(await findByText("Springfield")).toBeInTheDocument();
+  expect(await findByText("It is 65°")).toBeInTheDocument();
+  expect(alertSpy).not.toHaveBeenCalled();
+});
+
+test("editing the search box after a selection makes the next search a fresh name-based lookup", async () => {
+  const { getByRole, findByText, findByRole } = render(<App />);
+  await findByText("Austell");
+
+  fireEvent.change(getByRole("combobox"), { target: { value: "spring" } });
+  const option = await findByRole("option", { name: /Springfield.*Illinois/i });
+  fireEvent.mouseDown(option);
+  await findByText("It is 65°");
+
+  // The user now types over the selection rather than accepting it.
+  fireEvent.change(getByRole("combobox"), { target: { value: "Miami" } });
+  fireEvent.click(getByRole("button", { name: /search/i }));
+
+  expect(await findByText("Miami")).toBeInTheDocument();
+  expect(await findByText("It is 90°")).toBeInTheDocument();
 });
 
 test("pressing Enter in the search box (no suggestion highlighted) submits the form and searches by name", async () => {
