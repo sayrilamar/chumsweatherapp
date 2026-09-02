@@ -5,6 +5,15 @@
 // "UTC±HH:MM" label — pure, no Date.now()/setInterval here, so it's
 // testable without faking timers.
 
+// Shared by anything that needs to render a 24-hour value as a 12-hour
+// clock label (this file's own local-time display, and forecast.js's
+// hourly forecast slots).
+function to12Hour(hours24) {
+  const period = hours24 >= 12 ? "PM" : "AM";
+  const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+  return { hours12, period };
+}
+
 function getLocalTimeInfo(nowMs, timezoneOffsetSeconds) {
   if (typeof timezoneOffsetSeconds !== "number" || Number.isNaN(timezoneOffsetSeconds)) {
     return null;
@@ -17,8 +26,7 @@ function getLocalTimeInfo(nowMs, timezoneOffsetSeconds) {
   const hours24 = shifted.getUTCHours();
   const minutes = shifted.getUTCMinutes();
 
-  const period = hours24 >= 12 ? "PM" : "AM";
-  const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+  const { hours12, period } = to12Hour(hours24);
   const time = `${hours12}:${String(minutes).padStart(2, "0")} ${period}`;
 
   const totalOffsetMinutes = Math.round(timezoneOffsetSeconds / 60);
@@ -32,3 +40,4 @@ function getLocalTimeInfo(nowMs, timezoneOffsetSeconds) {
 }
 
 export default getLocalTimeInfo;
+export { to12Hour };

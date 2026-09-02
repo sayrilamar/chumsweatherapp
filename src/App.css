@@ -22,6 +22,14 @@
   align-items: center;
 }
 
+/* Mobile-first up to here; wider viewports get more breathing room so the
+   card can lay out in columns instead of one long vertical stack. */
+@media (min-width: 720px) {
+  .AppContent {
+    max-width: 760px;
+  }
+}
+
 .Heading {
   font-family: "Fira Sans", sans-serif;
   font-weight: 600;
@@ -35,8 +43,30 @@
 .SearchForm {
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: flex-start;
+}
+
+.SearchForm > div {
+  /* the CitySearch wrapper: let it shrink/grow, but always claim the full
+     row on its own so the two buttons wrap onto a tidy second line rather
+     than three items fighting for one row. */
+  flex: 1 1 100%;
+  min-width: 200px;
+}
+
+@media (min-width: 720px) {
+  .SearchForm > div {
+    /* enough room on wider screens for input + both buttons on one row. */
+    flex: 1 1 auto;
+    min-width: 240px;
+  }
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .button {

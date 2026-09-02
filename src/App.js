@@ -3,7 +3,9 @@ import "./App.css";
 import WeatherCard from "./components/WeatherCard/component.js";
 import CitySearch, { formatCityLabel } from "./components/CitySearch/component.js";
 import getWeatherTheme from "./theme/weatherTheme";
-import { groupForecastByDay } from "./utils/forecast";
+import { groupForecastByDay, getTodayForecastSlots } from "./utils/forecast";
+import { getCurrentPosition, describeGeolocationError } from "./utils/geolocation";
+import { recordPressureAndGetTrend } from "./utils/pressureHistory";
 
 const DEFAULT_LOCATION = "Austell";
 
@@ -26,18 +28,52 @@ async function fetchForecast(params) {
   return apiRes.json();
 }
 
-// Fetches current weather and the 5-day/3-hour forecast together — they're
-// always requested for the same location, so callers get both in one place
-// rather than juggling two separate promise chains at each call site.
+async function fetchAirPollution(params) {
+  const apiRes = await fetch(buildUrl("air_pollution", params));
+  return apiRes.json();
+}
+
+async function fetchUVIndex(params) {
+  const apiRes = await fetch(buildUrl("uvi", params));
+  return apiRes.json();
+}
+
+// Fetches current weather, the 5-day/3-hour forecast, air quality, and UV
+// index together for one location. Air quality/UV need lat/lon specifically
+// (not a city name), so they're always requested using the coordinates the
+// *weather* response resolved to — this works whether the original request
+// was by name or by coordinates, and means these two "nice to have" fetches
+// never block on knowing the location's coordinates up front. Their failure
+// is swallowed (mapWeatherResponse treats a null response as "unavailable")
+// rather than failing the whole location load over a non-critical extra.
 async function loadLocation(params) {
   const [weatherRes, forecastRes] = await Promise.all([fetchWeather(params), fetchForecast(params)]);
+  const coordParams = { lat: weatherRes.coord.lat, lon: weatherRes.coord.lon };
+  const [airRes, uvRes] = await Promise.all([
+    fetchAirPollution(coordParams).catch(() => null),
+    fetchUVIndex(coordParams).catch(() => null),
+  ]);
   return {
-    weather: mapWeatherResponse(weatherRes),
+    weather: mapWeatherResponse(weatherRes, airRes, uvRes, Date.now()),
     forecast: groupForecastByDay(forecastRes.list, weatherRes.timezone),
+    todaySlots: getTodayForecastSlots(forecastRes.list, weatherRes.timezone, Date.now()),
   };
 }
 
-function mapWeatherResponse(res) {
+// Pressure trend: OpenWeatherMap has no free historical-pressure endpoint
+// (One Call's timemachine needs the same paid subscription its live
+// forecast does — 401 on this app's key), so the app tracks its own
+// samples per location in localStorage (see utils/pressureHistory.js) and
+// compares against whatever's closest to 3 hours old. A location shows no
+// trend arrow until it's actually been visited that far back.
+function mapWeatherResponse(res, airRes, uvRes, nowMs) {
+  const airComponents = airRes?.list?.[0];
+  const { trend: pressureTrend } = recordPressureAndGetTrend(
+    res.coord.lat,
+    res.coord.lon,
+    res.main.pressure,
+    nowMs
+  );
   return {
     temp: Math.round(res.main.temp),
     city: res.name,
@@ -51,9 +87,15 @@ function mapWeatherResponse(res) {
     windDeg: res.wind.deg,
     humidity: res.main.humidity,
     pressure: res.main.pressure,
+    pressureTrend,
     visibility: res.visibility,
     sunrise: res.sys.sunrise,
     sunset: res.sys.sunset,
+    uvIndex: typeof uvRes?.value === "number" ? uvRes.value : null,
+    aqi: airComponents?.main?.aqi ?? null,
+    pm2_5: airComponents?.components?.pm2_5 ?? null,
+    pm10: airComponents?.components?.pm10 ?? null,
+    o3: airComponents?.components?.o3 ?? null,
   };
 }
 
@@ -70,9 +112,15 @@ const EMPTY_WEATHER = {
   windDeg: null,
   humidity: null,
   pressure: null,
+  pressureTrend: null,
   visibility: null,
   sunrise: null,
   sunset: null,
+  uvIndex: null,
+  aqi: null,
+  pm2_5: null,
+  pm10: null,
+  o3: null,
 };
 
 function App() {
@@ -89,6 +137,14 @@ function App() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [weather, setWeather] = useState(EMPTY_WEATHER);
   const [forecast, setForecast] = useState([]);
+  const [todaySlots, setTodaySlots] = useState([]);
+  const [locating, setLocating] = useState(false);
+
+  const applyLoadResult = ({ weather: w, forecast: f, todaySlots: t }) => {
+    setWeather(w);
+    setForecast(f);
+    setTodaySlots(t);
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -96,10 +152,7 @@ function App() {
     // unedited; otherwise fall back to a plain name-based search.
     const params = selectedCity ? { lat: selectedCity.lat, lon: selectedCity.lon } : { q: query };
     loadLocation(params)
-      .then(({ weather: w, forecast: f }) => {
-        setWeather(w);
-        setForecast(f);
-      })
+      .then(applyLoadResult)
       .catch(() => {
         alert("Check Your Spelling... Enter a valid city!");
         window.location.reload(true);
@@ -119,26 +172,55 @@ function App() {
     setSelectedCity(city);
     setQuery(formatCityLabel(city));
     loadLocation({ lat: city.lat, lon: city.lon })
-      .then(({ weather: w, forecast: f }) => {
-        setWeather(w);
-        setForecast(f);
-      })
+      .then(applyLoadResult)
       .catch((e) => {
         console.error("Failed to load weather for selected city:", e);
       });
   };
 
-  // runs once the dom is loaded for the first time only, because there is no
-  // variable being watched in the dependency array
-  useEffect(() => {
-    loadLocation({ q: DEFAULT_LOCATION })
-      .then(({ weather: w, forecast: f }) => {
-        setWeather(w);
-        setForecast(f);
+  // Resolves the browser's geolocation coordinates into a weather load,
+  // then treats the result exactly like an autocomplete selection (tracks
+  // it as `selectedCity` with its lat/lon, so a bare Search/Enter afterward
+  // re-resolves the same precise spot rather than re-parsing display text).
+  const locateAndLoad = () => {
+    setLocating(true);
+    return getCurrentPosition()
+      .then(({ coords }) => {
+        const { latitude: lat, longitude: lon } = coords;
+        return loadLocation({ lat, lon }).then(({ weather: w, forecast: f, todaySlots: t }) => {
+          setSelectedCity({ name: w.city, country: w.country, lat, lon });
+          setQuery(formatCityLabel({ name: w.city, country: w.country }));
+          setWeather(w);
+          setForecast(f);
+          setTodaySlots(t);
+        });
       })
-      .catch((e) => {
-        console.error("Failed to load default city weather:", e);
-      });
+      .finally(() => setLocating(false));
+  };
+
+  // Triggered by the "Use My Location" button — a direct user action, so an
+  // alert on failure (denied permission, unsupported browser, etc.) is
+  // appropriate feedback, same as the existing search-error alert.
+  const handleUseCurrentLocation = () => {
+    locateAndLoad().catch((err) => {
+      alert(describeGeolocationError(err));
+    });
+  };
+
+  // runs once on mount: try the browser's geolocation first so the app
+  // opens on the user's actual location; silently fall back to the default
+  // city on any failure (permission denied, unsupported, timeout, or even a
+  // subsequent fetch failure) — no alert here, since this isn't a user
+  // action and a popup on page load would be intrusive.
+  useEffect(() => {
+    locateAndLoad().catch(() =>
+      loadLocation({ q: DEFAULT_LOCATION })
+        .then(applyLoadResult)
+        .catch((e) => {
+          console.error("Failed to load default city weather:", e);
+        })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { gradient } = getWeatherTheme(weather.condition, weather.icon);
@@ -157,8 +239,17 @@ function App() {
           <button className="button" onClick={(e) => handleSearch(e)}>
             Search
           </button>
+          <button
+            type="button"
+            className="button"
+            onClick={handleUseCurrentLocation}
+            disabled={locating}
+            aria-label="Use my current location"
+          >
+            <span aria-hidden="true">📍</span> {locating ? "Locating…" : "Use My Location"}
+          </button>
         </form>
-        <WeatherCard weather={weather} forecast={forecast} />
+        <WeatherCard weather={weather} forecast={forecast} todaySlots={todaySlots} />
       </div>
     </div>
   );

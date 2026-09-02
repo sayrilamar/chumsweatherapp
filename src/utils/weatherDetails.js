@@ -18,4 +18,13 @@ function degreesToCompass(deg) {
   return COMPASS_POINTS[(index + 16) % 16];
 }
 
-export { metersToMiles, degreesToCompass };
+// OpenWeatherMap's `pressure` field is in hPa, which is numerically
+// identical to millibars (1 hPa = 1 mb exactly) — no conversion needed for
+// that half; this converts to inches of mercury for the US-customary
+// reading shown alongside it.
+function hpaToInHg(hpa) {
+  if (typeof hpa !== "number" || Number.isNaN(hpa)) return null;
+  return Math.round(hpa * 0.0295299830714 * 100) / 100;
+}
+
+export { metersToMiles, degreesToCompass, hpaToInHg };
