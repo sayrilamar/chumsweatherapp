@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import styled from "@emotion/styled";
+import { mmToInches } from "../../utils/weatherDetails";
 
 const State = styled.p`
   font-family: "Fira Sans", sans-serif;
@@ -28,7 +29,19 @@ const FeelsLike = styled.p`
   text-align: center;
 `;
 
-const Condition = ({ temp, condition, description, feels_like }) => {
+const Precip = styled.p`
+  font-family: "Fira Sans", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2f7bc7;
+  margin: 4px 0 0;
+  text-align: center;
+`;
+
+const Condition = ({ temp, condition, description, feels_like, rainVolume1h, snowVolume1h }) => {
+  const rainInches = mmToInches(rainVolume1h);
+  const snowInches = mmToInches(snowVolume1h);
+
   return (
     <Fragment>
       <Temp>
@@ -37,6 +50,16 @@ const Condition = ({ temp, condition, description, feels_like }) => {
       </Temp>
       <State>{description}</State>
       <FeelsLike>Feels like {feels_like}{"°"}</FeelsLike>
+      {typeof rainVolume1h === "number" && (
+        <Precip>
+          Rain: {rainVolume1h} mm/hr ({rainInches} in/hr)
+        </Precip>
+      )}
+      {typeof snowVolume1h === "number" && (
+        <Precip>
+          Snow: {snowVolume1h} mm/hr ({snowInches} in/hr)
+        </Precip>
+      )}
     </Fragment>
   );
 };

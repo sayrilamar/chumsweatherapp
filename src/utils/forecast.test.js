@@ -4,13 +4,21 @@
 // qi-risk-tier: medium
 // (qi-trace work-item omitted: tracker.type = "none" in .assert-iq/config.yaml)
 
-import { groupForecastByDay, formatForecastDayLabel } from "./forecast";
+import {
+  groupForecastByDay,
+  formatForecastDayLabel,
+  getTodayForecastSlots,
+  formatForecastHourLabel,
+} from "./forecast";
 
-function entry(dt, { tempMin, tempMax, icon = "01d", condition = "Clear" } = {}) {
+function entry(dt, { tempMin, tempMax, icon = "01d", condition = "Clear", pop, rain, snow } = {}) {
   return {
     dt,
     main: { temp_min: tempMin, temp_max: tempMax },
     weather: [{ main: condition, icon }],
+    ...(pop !== undefined && { pop }),
+    ...(rain !== undefined && { rain }),
+    ...(snow !== undefined && { snow }),
   };
 }
 
@@ -59,6 +67,25 @@ test("uses the slot closest to local noon as the representative icon/condition",
   expect(day.condition).toBe("Clear");
 });
 
+test("carries the day's highest chance-of-rain (pop) and total rain+snow volume", () => {
+  const list = [
+    entry(DAY1_00, { tempMin: 40, tempMax: 45, pop: 0.1, rain: { "3h": 0.2 } }),
+    entry(DAY1_12, { tempMin: 55, tempMax: 60, pop: 0.8, rain: { "3h": 1.4 }, snow: { "3h": 0.3 } }),
+    entry(DAY1_21, { tempMin: 48, tempMax: 50, pop: 0.3 }),
+  ];
+
+  const [day] = groupForecastByDay(list, 0);
+  expect(day.pop).toBe(80);
+  expect(day.precipMm).toBe(1.9);
+});
+
+test("defaults pop to 0% and precipMm to 0 when a forecast entry omits them entirely", () => {
+  const list = [entry(DAY1_00, { tempMin: 40, tempMax: 45 })];
+  const [day] = groupForecastByDay(list, 0);
+  expect(day.pop).toBe(0);
+  expect(day.precipMm).toBe(0);
+});
+
 test("groups by LOCAL day when a timezone offset shifts entries across the UTC day boundary", () => {
   // 21:00 UTC + 5 hours (offset +18000s) = 02:00 the next local day — this
   // entry must join DAY2's local group, not stay with DAY1's UTC-day entries.
@@ -85,4 +112,61 @@ test("formatForecastDayLabel renders the weekday at the shifted local date", () 
   // 2026-01-15 is a Thursday.
   const thursdayNoonUTC = Date.UTC(2026, 0, 15, 12, 0, 0);
   expect(formatForecastDayLabel(thursdayNoonUTC)).toBe("Thu");
+});
+
+describe("getTodayForecastSlots", () => {
+  const NOW = Date.UTC(2026, 0, 15, 10, 0, 0); // 10:00 UTC = 06:00 local (offset -4h)
+
+  test("returns only the remaining slots for today, in the city's local day", () => {
+    const list = [
+      entry(DAY1_00, { tempMin: 60, tempMax: 65 }), // 00:00 UTC = 20:00 *previous* local day — past, excluded
+      entry(DAY1_12, { tempMin: 70, tempMax: 75 }), // 12:00 UTC = 08:00 local today — included
+      entry(DAY1_21, { tempMin: 72, tempMax: 78 }), // 21:00 UTC = 17:00 local today — included
+      entry(DAY2_12, { tempMin: 65, tempMax: 70 }), // next local day — excluded
+    ];
+
+    const slots = getTodayForecastSlots(list, -4 * 3600, NOW);
+    expect(slots.map((s) => s.hour)).toEqual([8, 17]);
+  });
+
+  test("excludes slots that are already in the past relative to now", () => {
+    const list = [entry(NOW / 1000 - 3600, { tempMin: 60, tempMax: 65 })]; // 1h before "now"
+    expect(getTodayForecastSlots(list, 0, NOW)).toEqual([]);
+  });
+
+  test("rounds the temperature and carries icon/condition through", () => {
+    // entry()'s helper only sets temp_min/temp_max; getTodayForecastSlots
+    // reads main.temp, so build that fixture explicitly here.
+    const list = [{ dt: DAY1_12, main: { temp: 75.6 }, weather: [{ main: "Clear", icon: "01d" }] }];
+    const [slot] = getTodayForecastSlots(list, -4 * 3600, NOW);
+    expect(slot.temp).toBe(76);
+    expect(slot.icon).toBe("01d");
+    expect(slot.condition).toBe("Clear");
+  });
+
+  test("rounds pop to a whole percent, defaulting to 0 when the entry omits it", () => {
+    const list = [
+      { dt: DAY1_12, main: { temp: 75 }, weather: [{ main: "Rain", icon: "10d" }], pop: 0.375 },
+      { dt: DAY1_21, main: { temp: 70 }, weather: [{ main: "Clear", icon: "01d" }] },
+    ];
+    const [withPop, withoutPop] = getTodayForecastSlots(list, -4 * 3600, NOW);
+    expect(withPop.pop).toBe(38);
+    expect(withoutPop.pop).toBe(0);
+  });
+
+  test("returns an empty array when timezone or now is missing/invalid, rather than throwing", () => {
+    expect(getTodayForecastSlots([], undefined, NOW)).toEqual([]);
+    expect(getTodayForecastSlots([], -14400, undefined)).toEqual([]);
+  });
+
+  test("throws when list is not an array", () => {
+    expect(() => getTodayForecastSlots(undefined, -14400, NOW)).toThrow();
+  });
+});
+
+test("formatForecastHourLabel renders a 12-hour clock label", () => {
+  expect(formatForecastHourLabel(0)).toBe("12 AM");
+  expect(formatForecastHourLabel(8)).toBe("8 AM");
+  expect(formatForecastHourLabel(12)).toBe("12 PM");
+  expect(formatForecastHourLabel(17)).toBe("5 PM");
 });

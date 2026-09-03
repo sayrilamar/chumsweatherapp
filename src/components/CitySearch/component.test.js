@@ -210,6 +210,61 @@ test("clicking outside the search box closes the dropdown", async () => {
   expect(queryByRole("listbox")).not.toBeInTheDocument();
 });
 
+test("routes a ZIP-shaped query to the geocoding-by-ZIP endpoint and shows it as a single suggestion", async () => {
+  global.fetch = jest.fn((url) => {
+    expect(String(url)).toContain("/geo/1.0/zip");
+    expect(String(url)).toContain("zip=30106");
+    return Promise.resolve({
+      json: () =>
+        Promise.resolve({ zip: "30106", name: "Cobb County", country: "US", lat: 33.8369, lon: -84.6307 }),
+    });
+  });
+  const { getByRole, findAllByRole } = render(<ControlledCitySearch onSelectCity={jest.fn()} />);
+
+  fireEvent.change(getByRole("combobox"), { target: { value: "30106" } });
+
+  const options = await findAllByRole("option");
+  expect(options).toHaveLength(1);
+  expect(options[0]).toHaveTextContent("Cobb County");
+  expect(options[0]).toHaveTextContent("30106");
+  expect(options[0]).toHaveTextContent("US");
+});
+
+test("selecting a ZIP suggestion calls onSelectCity with its resolved lat/lon", async () => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      json: () =>
+        Promise.resolve({ zip: "90210", name: "Beverly Hills", country: "US", lat: 34.0901, lon: -118.4065 }),
+    })
+  );
+  const onSelectCity = jest.fn();
+  const { getByRole, findByRole } = render(<ControlledCitySearch onSelectCity={onSelectCity} />);
+
+  fireEvent.change(getByRole("combobox"), { target: { value: "90210" } });
+  const option = await findByRole("option");
+  fireEvent.mouseDown(option);
+
+  expect(onSelectCity).toHaveBeenCalledWith({
+    name: "Beverly Hills",
+    country: "US",
+    zip: "90210",
+    lat: 34.0901,
+    lon: -118.4065,
+  });
+});
+
+test("shows no suggestion for a ZIP code the geocoder doesn't recognize", async () => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({ json: () => Promise.resolve({ cod: "404", message: "not found" }) })
+  );
+  const { getByRole, queryByRole } = render(<ControlledCitySearch onSelectCity={jest.fn()} />);
+
+  fireEvent.change(getByRole("combobox"), { target: { value: "00000" } });
+  await new Promise((resolve) => setTimeout(resolve, 400));
+
+  expect(queryByRole("listbox")).not.toBeInTheDocument();
+});
+
 test("a stale, slower response never overwrites a newer, faster one", async () => {
   const deferred = {};
   global.fetch = jest.fn((url) => {

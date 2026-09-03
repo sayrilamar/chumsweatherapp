@@ -3,7 +3,10 @@ import "./App.css";
 import WeatherCard from "./components/WeatherCard/component.js";
 import CitySearch, { formatCityLabel } from "./components/CitySearch/component.js";
 import getWeatherTheme from "./theme/weatherTheme";
-import { groupForecastByDay } from "./utils/forecast";
+import { groupForecastByDay, getTodayForecastSlots } from "./utils/forecast";
+import { getCurrentPosition, describeGeolocationError } from "./utils/geolocation";
+import { recordPressureAndGetTrend } from "./utils/pressureHistory";
+import { looksLikeZipCode } from "./utils/zipCode";
 
 const DEFAULT_LOCATION = "Austell";
 
@@ -26,21 +29,86 @@ async function fetchForecast(params) {
   return apiRes.json();
 }
 
-// Fetches current weather and the 5-day/3-hour forecast together — they're
-// always requested for the same location, so callers get both in one place
-// rather than juggling two separate promise chains at each call site.
+async function fetchAirPollution(params) {
+  const apiRes = await fetch(buildUrl("air_pollution", params));
+  return apiRes.json();
+}
+
+async function fetchUVIndex(params) {
+  const apiRes = await fetch(buildUrl("uvi", params));
+  return apiRes.json();
+}
+
+// Geocoding-by-ZIP lives under a different base path (/geo/1.0/, not
+// /data/2.5/) than every other fetch here, so it can't reuse buildUrl.
+async function fetchZipGeocode(zipQuery) {
+  const qs = new URLSearchParams({
+    zip: zipQuery,
+    appid: process.env.REACT_APP_OPENWEATHER_API_KEY,
+  }).toString();
+  const apiRes = await fetch(`https://api.openweathermap.org/geo/1.0/zip?${qs}`);
+  return apiRes.json();
+}
+
+// A bare ZIP/postal code isn't a valid `q` (name) search — OpenWeatherMap's
+// current-weather-by-name endpoint doesn't reject it, it just silently
+// matches whatever place its internal ID happens to be (confirmed directly
+// against the API: "30106" resolved to a town in Costa Rica). So a
+// ZIP-shaped query is always resolved to coordinates via the ZIP geocoder
+// first, then loaded exactly like any other lat/lon location.
+function resolveSearchParams(query) {
+  if (looksLikeZipCode(query)) {
+    return fetchZipGeocode(query).then((z) => {
+      if (typeof z.lat !== "number" || typeof z.lon !== "number") {
+        throw new Error("ZIP code not found");
+      }
+      return { lat: z.lat, lon: z.lon };
+    });
+  }
+  return Promise.resolve({ q: query });
+}
+
+// Fetches current weather, the 5-day/3-hour forecast, air quality, and UV
+// index together for one location. Air quality/UV need lat/lon specifically
+// (not a city name), so they're always requested using the coordinates the
+// *weather* response resolved to — this works whether the original request
+// was by name or by coordinates, and means these two "nice to have" fetches
+// never block on knowing the location's coordinates up front. Their failure
+// is swallowed (mapWeatherResponse treats a null response as "unavailable")
+// rather than failing the whole location load over a non-critical extra.
 async function loadLocation(params) {
   const [weatherRes, forecastRes] = await Promise.all([fetchWeather(params), fetchForecast(params)]);
+  const coordParams = { lat: weatherRes.coord.lat, lon: weatherRes.coord.lon };
+  const [airRes, uvRes] = await Promise.all([
+    fetchAirPollution(coordParams).catch(() => null),
+    fetchUVIndex(coordParams).catch(() => null),
+  ]);
   return {
-    weather: mapWeatherResponse(weatherRes),
+    weather: mapWeatherResponse(weatherRes, airRes, uvRes, Date.now()),
     forecast: groupForecastByDay(forecastRes.list, weatherRes.timezone),
+    todaySlots: getTodayForecastSlots(forecastRes.list, weatherRes.timezone, Date.now()),
   };
 }
 
-function mapWeatherResponse(res) {
+// Pressure trend: OpenWeatherMap has no free historical-pressure endpoint
+// (One Call's timemachine needs the same paid subscription its live
+// forecast does — 401 on this app's key), so the app tracks its own
+// samples per location in localStorage (see utils/pressureHistory.js) and
+// compares against whatever's closest to 3 hours old. A location shows no
+// trend arrow until it's actually been visited that far back.
+function mapWeatherResponse(res, airRes, uvRes, nowMs) {
+  const airComponents = airRes?.list?.[0];
+  const { trend: pressureTrend } = recordPressureAndGetTrend(
+    res.coord.lat,
+    res.coord.lon,
+    res.main.pressure,
+    nowMs
+  );
   return {
     temp: Math.round(res.main.temp),
     city: res.name,
+    lat: res.coord.lat,
+    lon: res.coord.lon,
     condition: res.weather[0].main,
     country: res.sys.country,
     description: res.weather[0].description,
@@ -51,15 +119,28 @@ function mapWeatherResponse(res) {
     windDeg: res.wind.deg,
     humidity: res.main.humidity,
     pressure: res.main.pressure,
+    pressureTrend,
     visibility: res.visibility,
     sunrise: res.sys.sunrise,
     sunset: res.sys.sunset,
+    uvIndex: typeof uvRes?.value === "number" ? uvRes.value : null,
+    aqi: airComponents?.main?.aqi ?? null,
+    pm2_5: airComponents?.components?.pm2_5 ?? null,
+    pm10: airComponents?.components?.pm10 ?? null,
+    o3: airComponents?.components?.o3 ?? null,
+    // OpenWeatherMap only includes `rain`/`snow` on the current-weather
+    // response at all when it's actively happening (last 1h volume, mm) —
+    // there's no "0" case to handle, just present or entirely absent.
+    rainVolume1h: typeof res.rain?.["1h"] === "number" ? res.rain["1h"] : null,
+    snowVolume1h: typeof res.snow?.["1h"] === "number" ? res.snow["1h"] : null,
   };
 }
 
 const EMPTY_WEATHER = {
   temp: null,
   city: null,
+  lat: null,
+  lon: null,
   condition: null,
   country: null,
   description: null,
@@ -70,9 +151,17 @@ const EMPTY_WEATHER = {
   windDeg: null,
   humidity: null,
   pressure: null,
+  pressureTrend: null,
   visibility: null,
   sunrise: null,
   sunset: null,
+  uvIndex: null,
+  aqi: null,
+  pm2_5: null,
+  pm10: null,
+  o3: null,
+  rainVolume1h: null,
+  snowVolume1h: null,
 };
 
 function App() {
@@ -89,17 +178,25 @@ function App() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [weather, setWeather] = useState(EMPTY_WEATHER);
   const [forecast, setForecast] = useState([]);
+  const [todaySlots, setTodaySlots] = useState([]);
+  const [locating, setLocating] = useState(false);
+
+  const applyLoadResult = ({ weather: w, forecast: f, todaySlots: t }) => {
+    setWeather(w);
+    setForecast(f);
+    setTodaySlots(t);
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
     // Reuse the exact selection's coordinates if the box still shows it
-    // unedited; otherwise fall back to a plain name-based search.
-    const params = selectedCity ? { lat: selectedCity.lat, lon: selectedCity.lon } : { q: query };
-    loadLocation(params)
-      .then(({ weather: w, forecast: f }) => {
-        setWeather(w);
-        setForecast(f);
-      })
+    // unedited; otherwise fall back to a plain name (or ZIP code) search.
+    const paramsPromise = selectedCity
+      ? Promise.resolve({ lat: selectedCity.lat, lon: selectedCity.lon })
+      : resolveSearchParams(query);
+    paramsPromise
+      .then(loadLocation)
+      .then(applyLoadResult)
       .catch(() => {
         alert("Check Your Spelling... Enter a valid city!");
         window.location.reload(true);
@@ -119,26 +216,55 @@ function App() {
     setSelectedCity(city);
     setQuery(formatCityLabel(city));
     loadLocation({ lat: city.lat, lon: city.lon })
-      .then(({ weather: w, forecast: f }) => {
-        setWeather(w);
-        setForecast(f);
-      })
+      .then(applyLoadResult)
       .catch((e) => {
         console.error("Failed to load weather for selected city:", e);
       });
   };
 
-  // runs once the dom is loaded for the first time only, because there is no
-  // variable being watched in the dependency array
-  useEffect(() => {
-    loadLocation({ q: DEFAULT_LOCATION })
-      .then(({ weather: w, forecast: f }) => {
-        setWeather(w);
-        setForecast(f);
+  // Resolves the browser's geolocation coordinates into a weather load,
+  // then treats the result exactly like an autocomplete selection (tracks
+  // it as `selectedCity` with its lat/lon, so a bare Search/Enter afterward
+  // re-resolves the same precise spot rather than re-parsing display text).
+  const locateAndLoad = () => {
+    setLocating(true);
+    return getCurrentPosition()
+      .then(({ coords }) => {
+        const { latitude: lat, longitude: lon } = coords;
+        return loadLocation({ lat, lon }).then(({ weather: w, forecast: f, todaySlots: t }) => {
+          setSelectedCity({ name: w.city, country: w.country, lat, lon });
+          setQuery(formatCityLabel({ name: w.city, country: w.country }));
+          setWeather(w);
+          setForecast(f);
+          setTodaySlots(t);
+        });
       })
-      .catch((e) => {
-        console.error("Failed to load default city weather:", e);
-      });
+      .finally(() => setLocating(false));
+  };
+
+  // Triggered by the "Use My Location" button — a direct user action, so an
+  // alert on failure (denied permission, unsupported browser, etc.) is
+  // appropriate feedback, same as the existing search-error alert.
+  const handleUseCurrentLocation = () => {
+    locateAndLoad().catch((err) => {
+      alert(describeGeolocationError(err));
+    });
+  };
+
+  // runs once on mount: try the browser's geolocation first so the app
+  // opens on the user's actual location; silently fall back to the default
+  // city on any failure (permission denied, unsupported, timeout, or even a
+  // subsequent fetch failure) — no alert here, since this isn't a user
+  // action and a popup on page load would be intrusive.
+  useEffect(() => {
+    locateAndLoad().catch(() =>
+      loadLocation({ q: DEFAULT_LOCATION })
+        .then(applyLoadResult)
+        .catch((e) => {
+          console.error("Failed to load default city weather:", e);
+        })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { gradient } = getWeatherTheme(weather.condition, weather.icon);
@@ -152,13 +278,22 @@ function App() {
             query={query}
             onQueryChange={handleQueryChange}
             onSelectCity={handleSelectCity}
-            placeholder="Start typing a city…"
+            placeholder="Start typing a city or ZIP code…"
           />
           <button className="button" onClick={(e) => handleSearch(e)}>
             Search
           </button>
+          <button
+            type="button"
+            className="button"
+            onClick={handleUseCurrentLocation}
+            disabled={locating}
+            aria-label="Use my current location"
+          >
+            <span aria-hidden="true">📍</span> {locating ? "Locating…" : "Use My Location"}
+          </button>
         </form>
-        <WeatherCard weather={weather} forecast={forecast} />
+        <WeatherCard weather={weather} forecast={forecast} todaySlots={todaySlots} />
       </div>
     </div>
   );

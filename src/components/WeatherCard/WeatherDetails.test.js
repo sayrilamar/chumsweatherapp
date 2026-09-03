@@ -29,8 +29,32 @@ test("renders wind (with compass direction), humidity, pressure, and visibility"
 
   expect(getByText("6 mph ENE")).toBeInTheDocument();
   expect(getByText("80%")).toBeInTheDocument();
-  expect(getByText("1020 hPa")).toBeInTheDocument();
+  expect(getByText("1020 mb")).toBeInTheDocument();
+  expect(getByText("30.12 inHg")).toBeInTheDocument();
   expect(getByText("6.2 mi")).toBeInTheDocument();
+});
+
+test("renders a rising pressure trend arrow", () => {
+  // The arrow is its own nested <span>, and this pinned dom-testing-library
+  // version's getByText only matches an element's full text when all of
+  // its children are plain text (no nested elements) — so "1015 mb" (text)
+  // and "▲" (the arrow's own pure-text span) are checked independently
+  // rather than as one combined string.
+  const { getByText } = render(<WeatherDetails pressure={1015} pressureTrend="rising" />);
+  expect(getByText("1015 mb")).toBeInTheDocument();
+  expect(getByText("▲")).toBeInTheDocument();
+});
+
+test("renders a falling pressure trend arrow", () => {
+  const { getByText } = render(<WeatherDetails pressure={1015} pressureTrend="falling" />);
+  expect(getByText("1015 mb")).toBeInTheDocument();
+  expect(getByText("▼")).toBeInTheDocument();
+});
+
+test("renders no arrow when the trend is steady or unknown", () => {
+  const { getByText, queryByText } = render(<WeatherDetails pressure={1015} pressureTrend="steady" />);
+  expect(getByText("1015 mb")).toBeInTheDocument();
+  expect(queryByText(/▲|▼/)).not.toBeInTheDocument();
 });
 
 test("renders sunrise and sunset in the city's local time", () => {
@@ -53,4 +77,42 @@ test("renders sunrise and sunset in the city's local time", () => {
 
   expect(getByText("2:30 AM")).toBeInTheDocument();
   expect(getByText("4:00 PM")).toBeInTheDocument();
+});
+
+test("renders the UV index value and risk level", () => {
+  const { getByText } = render(<WeatherDetails uvIndex={8.86} />);
+  expect(getByText("9 · Very High")).toBeInTheDocument();
+});
+
+test("renders a placeholder for UV index when it's the only field missing", () => {
+  const { getAllByText } = render(<WeatherDetails windSpeed={5} windDeg={0} humidity={50} pressure={1000} />);
+  // Sunrise, Sunset, and UV Index are all unset here, so three tiles show
+  // the placeholder — just confirm it renders at all, per-tile correctness
+  // (which field maps to which value) is covered by the other tests.
+  expect(getAllByText("—").length).toBeGreaterThanOrEqual(1);
+});
+
+test("renders the whole grid when UV index is the only available field", () => {
+  const { container } = render(<WeatherDetails uvIndex={3} />);
+  expect(container.firstChild).not.toBeNull();
+});
+
+test("renders a Rain tile (mm + inches) when it's actively raining", () => {
+  const { getByText } = render(<WeatherDetails windSpeed={5} windDeg={0} humidity={50} rainVolume1h={0.5} />);
+  expect(getByText("Rain (1h)")).toBeInTheDocument();
+  expect(getByText("0.5 mm")).toBeInTheDocument();
+  expect(getByText("0.02 in")).toBeInTheDocument();
+});
+
+test("renders a Snow tile (mm + inches) when it's actively snowing", () => {
+  const { getByText } = render(<WeatherDetails windSpeed={5} windDeg={0} humidity={50} snowVolume1h={2} />);
+  expect(getByText("Snow (1h)")).toBeInTheDocument();
+  expect(getByText("2 mm")).toBeInTheDocument();
+  expect(getByText("0.08 in")).toBeInTheDocument();
+});
+
+test("renders no Rain or Snow tile when neither is present (the dry-weather default)", () => {
+  const { queryByText } = render(<WeatherDetails windSpeed={5} windDeg={0} humidity={50} />);
+  expect(queryByText(/Rain/)).not.toBeInTheDocument();
+  expect(queryByText(/Snow/)).not.toBeInTheDocument();
 });

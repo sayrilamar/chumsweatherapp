@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { looksLikeZipCode } from "../../utils/zipCode";
 
 const MIN_QUERY_LENGTH = 2;
 const DEBOUNCE_MS = 300;
@@ -11,6 +12,13 @@ function geocodeUrl(query) {
   return `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
     query
   )}&limit=${RESULT_LIMIT}&appid=${key}`;
+}
+
+// A different endpoint (by-ZIP, not by-name) than geocodeUrl above — always
+// returns at most one exact match rather than a list of candidates.
+function zipGeocodeUrl(query) {
+  const key = process.env.REACT_APP_OPENWEATHER_API_KEY;
+  return `https://api.openweathermap.org/geo/1.0/zip?zip=${encodeURIComponent(query)}&appid=${key}`;
 }
 
 // Debounced, race-condition-safe city autocomplete against OpenWeatherMap's
@@ -36,14 +44,28 @@ function useCityAutocomplete(query) {
     setLoading(true);
     setError(null);
 
+    const isZip = looksLikeZipCode(trimmed);
+
     const timer = setTimeout(() => {
-      fetch(geocodeUrl(trimmed))
+      fetch(isZip ? zipGeocodeUrl(trimmed) : geocodeUrl(trimmed))
         .then((res) => res.json())
         .then((results) => {
           // Ignore stale responses: only apply results if this is still
           // the most recent query the user has typed.
           if (latestQueryRef.current !== trimmed) return;
-          setSuggestions(Array.isArray(results) ? results : []);
+          if (isZip) {
+            // /geo/1.0/zip returns one object (or an error shape with no
+            // lat/lon, e.g. {cod:"404",...}), never an array — normalize it
+            // into the same single-suggestion shape the dropdown expects.
+            const valid = results && typeof results.lat === "number" && typeof results.lon === "number";
+            setSuggestions(
+              valid
+                ? [{ name: results.name, country: results.country, zip: results.zip, lat: results.lat, lon: results.lon }]
+                : []
+            );
+          } else {
+            setSuggestions(Array.isArray(results) ? results : []);
+          }
           setLoading(false);
         })
         .catch((e) => {
