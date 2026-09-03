@@ -30,14 +30,15 @@ const CITY_FIXTURES = {
   miami: {
     name: "Miami",
     country: "US",
-    main: "Clouds",
-    description: "few clouds",
-    icon: "02d",
+    main: "Rain",
+    description: "light rain",
+    icon: "10d",
     temp: 90,
     feels_like: 95,
     timezone: -14400, // UTC-04:00
     lat: 25.7617,
     lon: -80.1918,
+    rain: { "1h": 0.5 },
   },
   chicago: {
     name: "Chicago",
@@ -50,6 +51,7 @@ const CITY_FIXTURES = {
     timezone: -18000, // UTC-05:00
     lat: 41.8781,
     lon: -87.6298,
+    snow: { "1h": 1 },
   },
 };
 
@@ -125,11 +127,18 @@ function toWeatherJSON(fixture) {
     wind: { speed: fixture.windSpeed ?? 5, deg: fixture.windDeg ?? 180 },
     visibility: fixture.visibility ?? 10000,
     timezone: fixture.timezone ?? -18000,
+    ...(fixture.rain && { rain: fixture.rain }),
+    ...(fixture.snow && { snow: fixture.snow }),
   };
 }
 
-function forecastEntry(dt, tempMin, tempMax, icon, condition) {
-  return { dt, main: { temp_min: tempMin, temp_max: tempMax }, weather: [{ main: condition, icon }] };
+function forecastEntry(dt, tempMin, tempMax, icon, condition, extra = {}) {
+  return {
+    dt,
+    main: { temp_min: tempMin, temp_max: tempMax },
+    weather: [{ main: condition, icon }],
+    ...extra,
+  };
 }
 
 // One reusable, deterministic forecast fixture — its exact aggregation
@@ -370,6 +379,36 @@ test("displays air quality and UV index, fetched by the weather response's own c
   expect(getByText("Good")).toBeInTheDocument();
   expect(getByText("PM2.5 2.1 · PM10 2.7 · O₃ 52.5 μg/m³")).toBeInTheDocument();
   expect(await findByText("9 · Very High")).toBeInTheDocument();
+});
+
+test("shows no Rain or Snow tile for the default (dry) city, but shows Rain when a rainy city is searched", async () => {
+  const { getByRole, getByText, findByText, queryByText } = render(<App />);
+  await findByText("Austell");
+  expect(queryByText(/Rain \(1h\)/)).not.toBeInTheDocument();
+  expect(queryByText(/Snow \(1h\)/)).not.toBeInTheDocument();
+
+  fireEvent.change(getByRole("combobox"), { target: { value: "Miami" } });
+  fireEvent.click(getByRole("button", { name: /search/i }));
+
+  expect(await findByText("Miami")).toBeInTheDocument();
+  expect(getByText("Rain (1h)")).toBeInTheDocument();
+  expect(getByText("0.5 mm")).toBeInTheDocument();
+  // Also surfaced right in the hero card, not just the details tile.
+  expect(getByText("Rain: 0.5 mm/hr (0.02 in/hr)")).toBeInTheDocument();
+});
+
+test("shows a Snow tile for a snowy city", async () => {
+  const { getByRole, findByText, getByText } = render(<App />);
+  await findByText("Austell");
+
+  fireEvent.change(getByRole("combobox"), { target: { value: "Chicago" } });
+  fireEvent.click(getByRole("button", { name: /search/i }));
+
+  expect(await findByText("Chicago")).toBeInTheDocument();
+  expect(getByText("Snow (1h)")).toBeInTheDocument();
+  expect(getByText("1 mm")).toBeInTheDocument();
+  // Also surfaced right in the hero card, not just the details tile.
+  expect(getByText("Snow: 1 mm/hr (0.04 in/hr)")).toBeInTheDocument();
 });
 
 test("weather still loads normally when air quality/UV fetches fail (non-critical extras)", async () => {

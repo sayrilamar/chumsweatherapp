@@ -96,3 +96,23 @@ test("renders the whole grid when UV index is the only available field", () => {
   const { container } = render(<WeatherDetails uvIndex={3} />);
   expect(container.firstChild).not.toBeNull();
 });
+
+test("renders a Rain tile (mm + inches) when it's actively raining", () => {
+  const { getByText } = render(<WeatherDetails windSpeed={5} windDeg={0} humidity={50} rainVolume1h={0.5} />);
+  expect(getByText("Rain (1h)")).toBeInTheDocument();
+  expect(getByText("0.5 mm")).toBeInTheDocument();
+  expect(getByText("0.02 in")).toBeInTheDocument();
+});
+
+test("renders a Snow tile (mm + inches) when it's actively snowing", () => {
+  const { getByText } = render(<WeatherDetails windSpeed={5} windDeg={0} humidity={50} snowVolume1h={2} />);
+  expect(getByText("Snow (1h)")).toBeInTheDocument();
+  expect(getByText("2 mm")).toBeInTheDocument();
+  expect(getByText("0.08 in")).toBeInTheDocument();
+});
+
+test("renders no Rain or Snow tile when neither is present (the dry-weather default)", () => {
+  const { queryByText } = render(<WeatherDetails windSpeed={5} windDeg={0} humidity={50} />);
+  expect(queryByText(/Rain/)).not.toBeInTheDocument();
+  expect(queryByText(/Snow/)).not.toBeInTheDocument();
+});

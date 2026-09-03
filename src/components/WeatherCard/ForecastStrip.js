@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { formatForecastDayLabel } from "../../utils/forecast";
+import { mmToInches } from "../../utils/weatherDetails";
 
 // Matches TodayForecastStrip's heading exactly — the two strips now live
 // together in WeatherCard's ForecastPanel, so this label (previously
@@ -56,6 +57,25 @@ const Low = styled.span`
   color: #8a8aa3;
 `;
 
+// Same "only show when there's a real chance" rule as TodayForecastStrip's
+// Pop badge — a dry 5-day stretch shows no badges at all rather than five
+// "💧 0%"s.
+const Pop = styled.p`
+  font-family: "Fira Sans", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #2f7bc7;
+  margin: 2px 0 0;
+`;
+
+const PrecipAmount = styled.span`
+  display: block;
+  font-family: "Fira Sans", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #8a8aa3;
+`;
+
 function ForecastStrip({ days }) {
   if (!Array.isArray(days) || days.length === 0) return null;
 
@@ -70,6 +90,12 @@ function ForecastStrip({ days }) {
             <DayTemps>
               {day.maxTemp}° <Low>{day.minTemp}°</Low>
             </DayTemps>
+            {day.pop > 0 && (
+              <Pop aria-label={`${day.pop}% chance of rain`}>
+                <span aria-hidden="true">💧</span> {day.pop}%
+                {day.precipMm > 0 && <PrecipAmount>{mmToInches(day.precipMm)} in</PrecipAmount>}
+              </Pop>
+            )}
           </DayCard>
         ))}
       </Strip>

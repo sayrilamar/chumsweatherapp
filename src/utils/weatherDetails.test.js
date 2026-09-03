@@ -4,7 +4,7 @@
 // qi-risk-tier: low
 // (qi-trace work-item omitted: tracker.type = "none" in .assert-iq/config.yaml)
 
-import { metersToMiles, degreesToCompass } from "./weatherDetails";
+import { metersToMiles, degreesToCompass, mmToInches } from "./weatherDetails";
 
 test("metersToMiles converts and rounds to one decimal", () => {
   expect(metersToMiles(10000)).toBe(6.2);
@@ -33,4 +33,16 @@ test("degreesToCompass wraps around at 360", () => {
 test("degreesToCompass returns null for non-numeric input", () => {
   expect(degreesToCompass(null)).toBeNull();
   expect(degreesToCompass(undefined)).toBeNull();
+});
+
+test("mmToInches converts and rounds to two decimals", () => {
+  expect(mmToInches(25.4)).toBe(1);
+  expect(mmToInches(0.5)).toBe(0.02);
+  expect(mmToInches(0)).toBe(0);
+});
+
+test("mmToInches returns null for non-numeric input", () => {
+  expect(mmToInches(null)).toBeNull();
+  expect(mmToInches(undefined)).toBeNull();
+  expect(mmToInches(NaN)).toBeNull();
 });

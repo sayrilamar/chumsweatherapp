@@ -134,6 +134,8 @@ const WeatherCard = ({ weather, forecast, todaySlots }) => {
     pm2_5,
     pm10,
     o3,
+    rainVolume1h,
+    snowVolume1h,
   } = weather;
 
   return (
@@ -143,7 +145,14 @@ const WeatherCard = ({ weather, forecast, todaySlots }) => {
         <Location city={city} state={country} />
         <LocalTime timezoneOffsetSeconds={timezone} />
         <Icon condition={condition} icon={icon} />
-        <Condition temp={temp} condition={condition} description={description} feels_like={feels_like} />
+        <Condition
+          temp={temp}
+          condition={condition}
+          description={description}
+          feels_like={feels_like}
+          rainVolume1h={rainVolume1h}
+          snowVolume1h={snowVolume1h}
+        />
       </HeroPanel>
       <DetailsPanel>
         <WeatherDetails
@@ -157,6 +166,8 @@ const WeatherCard = ({ weather, forecast, todaySlots }) => {
           sunset={sunset}
           timezone={timezone}
           uvIndex={uvIndex}
+          rainVolume1h={rainVolume1h}
+          snowVolume1h={snowVolume1h}
         />
         <AirQuality aqi={aqi} pm2_5={pm2_5} pm10={pm10} o3={o3} />
       </DetailsPanel>

@@ -32,3 +32,19 @@ test("renders each slot's hour label, icon, and temperature", () => {
   expect(getByText("5 PM")).toBeInTheDocument();
   expect(getByText("79°")).toBeInTheDocument();
 });
+
+test("shows a chance-of-rain badge only on slots with a nonzero pop", () => {
+  const slots = [
+    { dt: 1, hour: 14, temp: 82, icon: "10d", condition: "Rain", pop: 60 },
+    { dt: 2, hour: 17, temp: 79, icon: "02d", condition: "Clouds", pop: 0 },
+  ];
+  const { getByText, queryByText } = render(<TodayForecastStrip slots={slots} />);
+
+  // The 💧 is its own aria-hidden <span> (decorative, per
+  // jsx-a11y/accessible-emoji), so — per this pinned dom-testing-library
+  // version's getByText behavior (see WeatherDetails.test.js) — it's
+  // excluded from the parent's own text and checked separately.
+  expect(getByText("60%")).toBeInTheDocument();
+  expect(getByText("💧")).toBeInTheDocument();
+  expect(queryByText("0%")).not.toBeInTheDocument();
+});

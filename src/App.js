@@ -96,6 +96,11 @@ function mapWeatherResponse(res, airRes, uvRes, nowMs) {
     pm2_5: airComponents?.components?.pm2_5 ?? null,
     pm10: airComponents?.components?.pm10 ?? null,
     o3: airComponents?.components?.o3 ?? null,
+    // OpenWeatherMap only includes `rain`/`snow` on the current-weather
+    // response at all when it's actively happening (last 1h volume, mm) —
+    // there's no "0" case to handle, just present or entirely absent.
+    rainVolume1h: typeof res.rain?.["1h"] === "number" ? res.rain["1h"] : null,
+    snowVolume1h: typeof res.snow?.["1h"] === "number" ? res.snow["1h"] : null,
   };
 }
 
@@ -121,6 +126,8 @@ const EMPTY_WEATHER = {
   pm2_5: null,
   pm10: null,
   o3: null,
+  rainVolume1h: null,
+  snowVolume1h: null,
 };
 
 function App() {

@@ -11,11 +11,14 @@ import {
   formatForecastHourLabel,
 } from "./forecast";
 
-function entry(dt, { tempMin, tempMax, icon = "01d", condition = "Clear" } = {}) {
+function entry(dt, { tempMin, tempMax, icon = "01d", condition = "Clear", pop, rain, snow } = {}) {
   return {
     dt,
     main: { temp_min: tempMin, temp_max: tempMax },
     weather: [{ main: condition, icon }],
+    ...(pop !== undefined && { pop }),
+    ...(rain !== undefined && { rain }),
+    ...(snow !== undefined && { snow }),
   };
 }
 
@@ -62,6 +65,25 @@ test("uses the slot closest to local noon as the representative icon/condition",
   const [day] = groupForecastByDay(list, 0);
   expect(day.icon).toBe("01d");
   expect(day.condition).toBe("Clear");
+});
+
+test("carries the day's highest chance-of-rain (pop) and total rain+snow volume", () => {
+  const list = [
+    entry(DAY1_00, { tempMin: 40, tempMax: 45, pop: 0.1, rain: { "3h": 0.2 } }),
+    entry(DAY1_12, { tempMin: 55, tempMax: 60, pop: 0.8, rain: { "3h": 1.4 }, snow: { "3h": 0.3 } }),
+    entry(DAY1_21, { tempMin: 48, tempMax: 50, pop: 0.3 }),
+  ];
+
+  const [day] = groupForecastByDay(list, 0);
+  expect(day.pop).toBe(80);
+  expect(day.precipMm).toBe(1.9);
+});
+
+test("defaults pop to 0% and precipMm to 0 when a forecast entry omits them entirely", () => {
+  const list = [entry(DAY1_00, { tempMin: 40, tempMax: 45 })];
+  const [day] = groupForecastByDay(list, 0);
+  expect(day.pop).toBe(0);
+  expect(day.precipMm).toBe(0);
 });
 
 test("groups by LOCAL day when a timezone offset shifts entries across the UTC day boundary", () => {
@@ -120,6 +142,16 @@ describe("getTodayForecastSlots", () => {
     expect(slot.temp).toBe(76);
     expect(slot.icon).toBe("01d");
     expect(slot.condition).toBe("Clear");
+  });
+
+  test("rounds pop to a whole percent, defaulting to 0 when the entry omits it", () => {
+    const list = [
+      { dt: DAY1_12, main: { temp: 75 }, weather: [{ main: "Rain", icon: "10d" }], pop: 0.375 },
+      { dt: DAY1_21, main: { temp: 70 }, weather: [{ main: "Clear", icon: "01d" }] },
+    ];
+    const [withPop, withoutPop] = getTodayForecastSlots(list, -4 * 3600, NOW);
+    expect(withPop.pop).toBe(38);
+    expect(withoutPop.pop).toBe(0);
   });
 
   test("returns an empty array when timezone or now is missing/invalid, rather than throwing", () => {

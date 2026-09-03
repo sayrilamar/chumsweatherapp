@@ -19,11 +19,23 @@ function groupForecastByDay(list, timezoneOffsetSeconds) {
     const hour = shifted.getUTCHours();
 
     if (!byDay.has(dayKey)) {
-      byDay.set(dayKey, { minTemp: entry.main.temp_min, maxTemp: entry.main.temp_max, entries: [] });
+      byDay.set(dayKey, {
+        minTemp: entry.main.temp_min,
+        maxTemp: entry.main.temp_max,
+        maxPop: 0,
+        precipMm: 0,
+        entries: [],
+      });
     }
     const day = byDay.get(dayKey);
     day.minTemp = Math.min(day.minTemp, entry.main.temp_min);
     day.maxTemp = Math.max(day.maxTemp, entry.main.temp_max);
+    // `pop` (probability of precipitation) is on every 3-hour slot; the
+    // day's highest slot is the most useful single "chance of rain" figure.
+    // `rain`/`snow` "3h" volumes only appear on slots where some is
+    // forecast, so the day's total is just their sum across the day.
+    day.maxPop = Math.max(day.maxPop, typeof entry.pop === "number" ? entry.pop : 0);
+    day.precipMm += (entry.rain?.["3h"] ?? 0) + (entry.snow?.["3h"] ?? 0);
     day.entries.push({
       hour,
       dt: entry.dt,
@@ -45,6 +57,8 @@ function groupForecastByDay(list, timezoneOffsetSeconds) {
       maxTemp: Math.round(day.maxTemp),
       icon: representative.icon,
       condition: representative.condition,
+      pop: Math.round(day.maxPop * 100),
+      precipMm: Math.round(day.precipMm * 10) / 10,
     };
   });
 }
@@ -87,6 +101,7 @@ function getTodayForecastSlots(list, timezoneOffsetSeconds, nowMs) {
       temp: Math.round(entry.main.temp),
       icon: entry.weather[0].icon,
       condition: entry.weather[0].main,
+      pop: Math.round((typeof entry.pop === "number" ? entry.pop : 0) * 100),
     }));
 }
 

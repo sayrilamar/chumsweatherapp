@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import getLocalTimeInfo from "../../utils/localTime";
-import { metersToMiles, degreesToCompass, hpaToInHg } from "../../utils/weatherDetails";
+import { metersToMiles, degreesToCompass, hpaToInHg, mmToInches } from "../../utils/weatherDetails";
 import { describeUVIndex } from "../../utils/uvIndex";
 
 const Grid = styled.div`
@@ -61,6 +61,8 @@ function WeatherDetails({
   sunset,
   timezone,
   uvIndex,
+  rainVolume1h,
+  snowVolume1h,
 }) {
   const hasAny =
     typeof windSpeed === "number" ||
@@ -78,6 +80,8 @@ function WeatherDetails({
   const sunriseInfo = typeof sunrise === "number" ? getLocalTimeInfo(sunrise * 1000, timezone) : null;
   const sunsetInfo = typeof sunset === "number" ? getLocalTimeInfo(sunset * 1000, timezone) : null;
   const uvInfo = describeUVIndex(uvIndex);
+  const rainInches = mmToInches(rainVolume1h);
+  const snowInches = mmToInches(snowVolume1h);
 
   return (
     <Grid>
@@ -91,6 +95,20 @@ function WeatherDetails({
         <Label>Humidity</Label>
         <Value>{humidity}%</Value>
       </Tile>
+      {typeof rainVolume1h === "number" && (
+        <Tile>
+          <Label>Rain (1h)</Label>
+          <Value>{rainVolume1h} mm</Value>
+          {rainInches !== null && <SubValue>{rainInches} in</SubValue>}
+        </Tile>
+      )}
+      {typeof snowVolume1h === "number" && (
+        <Tile>
+          <Label>Snow (1h)</Label>
+          <Value>{snowVolume1h} mm</Value>
+          {snowInches !== null && <SubValue>{snowInches} in</SubValue>}
+        </Tile>
+      )}
       <Tile>
         <Label>Pressure</Label>
         <Value>

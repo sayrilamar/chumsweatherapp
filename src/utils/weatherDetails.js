@@ -27,4 +27,13 @@ function hpaToInHg(hpa) {
   return Math.round(hpa * 0.0295299830714 * 100) / 100;
 }
 
-export { metersToMiles, degreesToCompass, hpaToInHg };
+// OpenWeatherMap reports precipitation volume in millimeters everywhere
+// (current weather's `rain`/`snow` "1h", forecast's "3h") regardless of the
+// `units` query param — this converts to inches for the US-customary
+// reading shown alongside it, same pairing as hpaToInHg above.
+function mmToInches(mm) {
+  if (typeof mm !== "number" || Number.isNaN(mm)) return null;
+  return Math.round(mm * 0.0393701 * 100) / 100;
+}
+
+export { metersToMiles, degreesToCompass, hpaToInHg, mmToInches };

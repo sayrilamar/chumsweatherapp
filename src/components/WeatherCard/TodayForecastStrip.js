@@ -48,6 +48,16 @@ const SlotTemp = styled.p`
   margin: 0;
 `;
 
+// Only rendered when there's an actual chance (see below) — a "💧 0%" on
+// every dry slot would just be noise repeated across the whole strip.
+const Pop = styled.p`
+  font-family: "Fira Sans", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #2f7bc7;
+  margin: 2px 0 0;
+`;
+
 // Not true hourly (the free-tier API doesn't offer that — see forecast.js),
 // but the closest available: the remaining 3-hour slots for the rest of
 // today, from data already fetched for the 5-day strip.
@@ -66,6 +76,11 @@ function TodayForecastStrip({ slots }) {
               alt={slot.condition}
             />
             <SlotTemp>{slot.temp}°</SlotTemp>
+            {slot.pop > 0 && (
+              <Pop aria-label={`${slot.pop}% chance of rain`}>
+                <span aria-hidden="true">💧</span> {slot.pop}%
+              </Pop>
+            )}
           </SlotCard>
         ))}
       </Strip>
