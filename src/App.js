@@ -6,6 +6,7 @@ import getWeatherTheme from "./theme/weatherTheme";
 import { groupForecastByDay, getTodayForecastSlots } from "./utils/forecast";
 import { getCurrentPosition, describeGeolocationError } from "./utils/geolocation";
 import { recordPressureAndGetTrend } from "./utils/pressureHistory";
+import { looksLikeZipCode } from "./utils/zipCode";
 
 const DEFAULT_LOCATION = "Austell";
 
@@ -36,6 +37,35 @@ async function fetchAirPollution(params) {
 async function fetchUVIndex(params) {
   const apiRes = await fetch(buildUrl("uvi", params));
   return apiRes.json();
+}
+
+// Geocoding-by-ZIP lives under a different base path (/geo/1.0/, not
+// /data/2.5/) than every other fetch here, so it can't reuse buildUrl.
+async function fetchZipGeocode(zipQuery) {
+  const qs = new URLSearchParams({
+    zip: zipQuery,
+    appid: process.env.REACT_APP_OPENWEATHER_API_KEY,
+  }).toString();
+  const apiRes = await fetch(`https://api.openweathermap.org/geo/1.0/zip?${qs}`);
+  return apiRes.json();
+}
+
+// A bare ZIP/postal code isn't a valid `q` (name) search — OpenWeatherMap's
+// current-weather-by-name endpoint doesn't reject it, it just silently
+// matches whatever place its internal ID happens to be (confirmed directly
+// against the API: "30106" resolved to a town in Costa Rica). So a
+// ZIP-shaped query is always resolved to coordinates via the ZIP geocoder
+// first, then loaded exactly like any other lat/lon location.
+function resolveSearchParams(query) {
+  if (looksLikeZipCode(query)) {
+    return fetchZipGeocode(query).then((z) => {
+      if (typeof z.lat !== "number" || typeof z.lon !== "number") {
+        throw new Error("ZIP code not found");
+      }
+      return { lat: z.lat, lon: z.lon };
+    });
+  }
+  return Promise.resolve({ q: query });
 }
 
 // Fetches current weather, the 5-day/3-hour forecast, air quality, and UV
@@ -77,6 +107,8 @@ function mapWeatherResponse(res, airRes, uvRes, nowMs) {
   return {
     temp: Math.round(res.main.temp),
     city: res.name,
+    lat: res.coord.lat,
+    lon: res.coord.lon,
     condition: res.weather[0].main,
     country: res.sys.country,
     description: res.weather[0].description,
@@ -107,6 +139,8 @@ function mapWeatherResponse(res, airRes, uvRes, nowMs) {
 const EMPTY_WEATHER = {
   temp: null,
   city: null,
+  lat: null,
+  lon: null,
   condition: null,
   country: null,
   description: null,
@@ -156,9 +190,12 @@ function App() {
   const handleSearch = (e) => {
     e.preventDefault();
     // Reuse the exact selection's coordinates if the box still shows it
-    // unedited; otherwise fall back to a plain name-based search.
-    const params = selectedCity ? { lat: selectedCity.lat, lon: selectedCity.lon } : { q: query };
-    loadLocation(params)
+    // unedited; otherwise fall back to a plain name (or ZIP code) search.
+    const paramsPromise = selectedCity
+      ? Promise.resolve({ lat: selectedCity.lat, lon: selectedCity.lon })
+      : resolveSearchParams(query);
+    paramsPromise
+      .then(loadLocation)
       .then(applyLoadResult)
       .catch(() => {
         alert("Check Your Spelling... Enter a valid city!");
@@ -241,7 +278,7 @@ function App() {
             query={query}
             onQueryChange={handleQueryChange}
             onSelectCity={handleSelectCity}
-            placeholder="Start typing a city…"
+            placeholder="Start typing a city or ZIP code…"
           />
           <button className="button" onClick={(e) => handleSearch(e)}>
             Search

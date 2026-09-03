@@ -76,6 +76,7 @@ const HintText = styled.p`
 
 function formatCityLabel(city) {
   const parts = [city.name];
+  if (city.zip) parts.push(city.zip);
   if (city.state) parts.push(city.state);
   if (city.country) parts.push(city.country);
   return parts.join(", ");
@@ -170,7 +171,7 @@ function CitySearch({ query, onQueryChange, onSelectCity, placeholder }) {
             >
               {city.name}
               <SuggestionMeta>
-                {[city.state, city.country].filter(Boolean).join(", ")}
+                {[city.zip, city.state, city.country].filter(Boolean).join(", ")}
               </SuggestionMeta>
             </SuggestionItem>
           ))}

@@ -86,6 +86,27 @@ const WEATHER_BY_LATLON = {
     lat: 40.7128,
     lon: -74.006,
   },
+  // Same coordinates as CITY_FIXTURES.austell — a ZIP-code search resolves
+  // to lat/lon (see ZIP_FIXTURES below) and then loads weather by
+  // coordinates, same as any other geocoded selection.
+  "33.8126,-84.6344": {
+    name: "Austell",
+    country: "US",
+    main: "Clear",
+    description: "clear sky",
+    icon: "01d",
+    temp: 75,
+    feels_like: 73,
+    timezone: -14400, // UTC-04:00
+    lat: 33.8126,
+    lon: -84.6344,
+  },
+};
+
+// Keyed exactly as the `zip` query param is sent (no country suffix, since
+// the app's own ZIP detection accepts a bare numeric code).
+const ZIP_FIXTURES = {
+  30106: { zip: "30106", name: "Cobb County", country: "US", lat: 33.8126, lon: -84.6344 },
 };
 
 // Air quality + UV, keyed the same "lat,lon" way, looked up by each
@@ -162,6 +183,15 @@ function mockFetchImplementation(url) {
     // finish typing the whole city name before results appear.
     const key = Object.keys(GEOCODE_FIXTURES).find((k) => k.startsWith(q));
     return Promise.resolve({ json: () => Promise.resolve(key ? GEOCODE_FIXTURES[key] : []) });
+  }
+
+  if (urlStr.includes("/geo/1.0/zip")) {
+    const match = urlStr.match(/[?&]zip=([^&]*)/);
+    const zipParam = match ? decodeURIComponent(match[1]) : "";
+    const fixture = ZIP_FIXTURES[zipParam];
+    return Promise.resolve({
+      json: () => Promise.resolve(fixture || { cod: "404", message: "not found" }),
+    });
   }
 
   if (urlStr.includes(OFFLINE_SENTINEL)) {
@@ -477,6 +507,37 @@ test("searches for a new city by name and displays its weather", async () => {
 
   expect(await findByText("Miami")).toBeInTheDocument();
   expect(await findByText("It is 90°")).toBeInTheDocument();
+});
+
+test("searching by ZIP code resolves to the correct coordinates, not a name-based guess", async () => {
+  const { getByRole, findByText } = render(<App />);
+  await findByText("Austell");
+
+  // Typed and searched directly (no autocomplete suggestion selected) — the
+  // exact path that used to silently resolve a bare ZIP to an unrelated
+  // place via the name-based endpoint (see App.js's resolveSearchParams).
+  fireEvent.change(getByRole("combobox"), { target: { value: "30106" } });
+  fireEvent.click(getByRole("button", { name: /search/i }));
+
+  expect(await findByText("Austell")).toBeInTheDocument();
+  expect(await findByText("It is 75°")).toBeInTheDocument();
+});
+
+test("shows the error path (not a wrong-city guess) for a ZIP code the geocoder doesn't recognize", async () => {
+  const alertSpy = jest.spyOn(window, "alert").mockImplementation(() => {});
+  delete window.location;
+  window.location = { reload: jest.fn() };
+
+  const { getByRole, findByText } = render(<App />);
+  await findByText("Austell");
+
+  fireEvent.change(getByRole("combobox"), { target: { value: "00000" } });
+  fireEvent.click(getByRole("button", { name: /search/i }));
+
+  await wait(() => {
+    expect(alertSpy).toHaveBeenCalledWith("Check Your Spelling... Enter a valid city!");
+  });
+  expect(window.location.reload).toHaveBeenCalledWith(true);
 });
 
 test("selecting an autocomplete suggestion fetches by lat/lon and displays that city's weather", async () => {

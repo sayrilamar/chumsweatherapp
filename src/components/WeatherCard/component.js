@@ -8,6 +8,7 @@ import WeatherDetails from "./WeatherDetails";
 import AirQuality from "./AirQuality";
 import TodayForecastStrip from "./TodayForecastStrip";
 import ForecastStrip from "./ForecastStrip";
+import WeatherMap from "./WeatherMap";
 
 // Mobile-first: one column, everything stacked in reading order. From
 // ~720px up (matching .AppContent's own breakpoint in App.css) this becomes
@@ -27,6 +28,7 @@ const Card = styled.div`
     "hero"
     "details"
     "forecast"
+    "map"
     "signature";
   gap: 20px;
   text-align: center;
@@ -47,6 +49,7 @@ const Card = styled.div`
       "heading heading"
       "hero details"
       "forecast forecast"
+      "map map"
       "signature signature";
   }
 `;
@@ -103,6 +106,13 @@ const ForecastPanel = styled.div`
   gap: 20px;
 `;
 
+const MapPanel = styled.div`
+  grid-area: map;
+  width: 100%;
+  padding-top: 20px;
+  border-top: 1px solid rgba(74, 74, 104, 0.15);
+`;
+
 const Signature = styled.p`
   grid-area: signature;
   font-family: "Fira Sans", sans-serif;
@@ -117,6 +127,8 @@ const WeatherCard = ({ weather, forecast, todaySlots }) => {
     condition,
     city,
     country,
+    lat,
+    lon,
     description,
     feels_like,
     icon,
@@ -175,6 +187,11 @@ const WeatherCard = ({ weather, forecast, todaySlots }) => {
         <TodayForecastStrip slots={todaySlots} />
         <ForecastStrip days={forecast} />
       </ForecastPanel>
+      {typeof lat === "number" && typeof lon === "number" && (
+        <MapPanel>
+          <WeatherMap lat={lat} lon={lon} city={city} />
+        </MapPanel>
+      )}
       <Signature>created by daddy!</Signature>
     </Card>
   );
