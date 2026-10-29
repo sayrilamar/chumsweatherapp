@@ -731,3 +731,77 @@ test("integration: the page background theme updates when a new city's condition
   expect(themeSpy).toHaveBeenCalledWith("Snow", "13d");
   themeSpy.mockRestore();
 });
+
+test("shows an empty-state invite for saved cities before anything has been saved", async () => {
+  const { findByText, getByText } = render(<App />);
+  await findByText("Austell");
+  expect(getByText(/save a city/i)).toBeInTheDocument();
+});
+
+test("starring the current city adds it to the saved-cities list, with its at-a-glance weather", async () => {
+  const { findByText, getByLabelText, findAllByText } = render(<App />);
+  await findByText("Austell");
+
+  fireEvent.click(getByLabelText("Save Austell"));
+
+  // The saved-cities list now shows Austell (separately from the main
+  // hero card, which also says "Austell" — hence findAllByText).
+  expect(await findAllByText("Austell, US")).toHaveLength(1);
+  expect(await findByText("75° Clear")).toBeInTheDocument();
+  // The star toggle itself flips to the "remove" state.
+  expect(getByLabelText("Remove Austell from saved cities")).toBeInTheDocument();
+  // ...and it's distinct from the saved-cities list's own remove button.
+  expect(getByLabelText("Remove Austell from the saved-cities list")).toBeInTheDocument();
+});
+
+test("clicking a saved city loads its weather via its stored coordinates, not a name re-lookup", async () => {
+  const { findByText, getByLabelText, getByRole, getByText, queryByText } = render(<App />);
+  await findByText("Austell");
+
+  fireEvent.click(getByLabelText("Save Austell"));
+  await findByText("75° Clear");
+
+  fireEvent.change(getByRole("combobox"), { target: { value: "Miami" } });
+  fireEvent.click(getByRole("button", { name: /^search$/i }));
+  await findByText("Miami");
+  expect(queryByText("It is 75°")).not.toBeInTheDocument();
+
+  fireEvent.click(getByText("Austell, US"));
+
+  expect(await findByText("It is 75°")).toBeInTheDocument();
+  expect(getByText("Austell")).toBeInTheDocument();
+});
+
+test("removing a saved city takes it out of the list and back to the empty state", async () => {
+  const { findByText, getByLabelText, getByText } = render(<App />);
+  await findByText("Austell");
+
+  fireEvent.click(getByLabelText("Save Austell"));
+  await findByText("75° Clear");
+
+  fireEvent.click(getByLabelText("Remove Austell from the saved-cities list"));
+
+  expect(await findByText(/save a city/i)).toBeInTheDocument();
+  // Removing from the list doesn't touch the currently-loaded weather view.
+  expect(getByText("Austell")).toBeInTheDocument();
+});
+
+test("shows a non-blocking error (current view keeps working) when saving fails", async () => {
+  const { findByText, getByLabelText, getByRole, getByText, queryByText } = render(<App />);
+  await findByText("Austell");
+
+  const setItemSpy = jest.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+    throw new Error("QuotaExceededError");
+  });
+
+  fireEvent.click(getByLabelText("Save Austell"));
+
+  expect(await findByText(/couldn't update your saved cities/i)).toBeInTheDocument();
+  // Not actually saved — still shows the "save" (unfilled) state, not "remove".
+  expect(getByRole("button", { name: "Save Austell" })).toBeInTheDocument();
+  // The main weather view is completely unaffected by the failed save.
+  expect(getByText("It is 75°")).toBeInTheDocument();
+  expect(queryByText("Austell, US")).not.toBeInTheDocument();
+
+  setItemSpy.mockRestore();
+});

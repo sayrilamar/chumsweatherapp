@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import WeatherCard from "./components/WeatherCard/component.js";
 import CitySearch, { formatCityLabel } from "./components/CitySearch/component.js";
+import SavedCities from "./components/SavedCities/component.js";
 import getWeatherTheme from "./theme/weatherTheme";
 import { groupForecastByDay, getTodayForecastSlots } from "./utils/forecast";
 import { getCurrentPosition, describeGeolocationError } from "./utils/geolocation";
 import { recordPressureAndGetTrend } from "./utils/pressureHistory";
 import { looksLikeZipCode } from "./utils/zipCode";
+import { getSavedCities, saveCity, removeSavedCity, isCitySaved, cityKey } from "./utils/savedCities";
 
 const DEFAULT_LOCATION = "Austell";
 
@@ -180,6 +182,12 @@ function App() {
   const [forecast, setForecast] = useState([]);
   const [todaySlots, setTodaySlots] = useState([]);
   const [locating, setLocating] = useState(false);
+  const [savedCities, setSavedCities] = useState(() => getSavedCities());
+  // Per-city "at a glance" weather (temp + condition) for the saved-cities
+  // list, keyed by cityKey(lat, lon). Fetched separately from the main
+  // weather view below, in parallel across every saved city.
+  const [savedCitiesWeather, setSavedCitiesWeather] = useState({});
+  const [saveError, setSaveError] = useState(null);
 
   const applyLoadResult = ({ weather: w, forecast: f, todaySlots: t }) => {
     setWeather(w);
@@ -251,6 +259,39 @@ function App() {
     });
   };
 
+  // Star/unstar the currently-loaded city. A failed write (storage full or
+  // unavailable) is surfaced via saveError rather than silently pretending
+  // the toggle took effect — the current weather view keeps working either
+  // way.
+  const handleToggleSave = () => {
+    if (typeof weather.lat !== "number" || typeof weather.lon !== "number") return;
+    const { cities, persisted } = isCitySaved(savedCities, weather.lat, weather.lon)
+      ? removeSavedCity(weather.lat, weather.lon)
+      : saveCity({ name: weather.city, country: weather.country, lat: weather.lat, lon: weather.lon });
+    setSavedCities(cities);
+    setSaveError(persisted ? null : "Couldn't update your saved cities — storage may be full or unavailable.");
+  };
+
+  const handleRemoveSavedCity = (city) => {
+    const { cities, persisted } = removeSavedCity(city.lat, city.lon);
+    setSavedCities(cities);
+    setSaveError(persisted ? null : "Couldn't update your saved cities — storage may be full or unavailable.");
+  };
+
+  // Tapping a saved city loads it the same way an autocomplete selection
+  // does: by its stored coordinates, never a re-geocoded name lookup (the
+  // exact bug class App.js already shipped once — see the stale-search fix
+  // this app's commit history mentions).
+  const handleSelectSavedCity = (city) => {
+    setSelectedCity(city);
+    setQuery(formatCityLabel(city));
+    loadLocation({ lat: city.lat, lon: city.lon })
+      .then(applyLoadResult)
+      .catch((e) => {
+        console.error("Failed to load weather for saved city:", e);
+      });
+  };
+
   // runs once on mount: try the browser's geolocation first so the app
   // opens on the user's actual location; silently fall back to the default
   // city on any failure (permission denied, unsupported, timeout, or even a
@@ -266,6 +307,40 @@ function App() {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Refreshes each saved city's "at a glance" temp/condition whenever the
+  // saved list changes. Uses the same fetchWeather as the main view, but a
+  // failure for one city (unreachable, 404-shaped body) just leaves that
+  // entry missing from the map rather than failing the others —
+  // Promise.allSettled, not Promise.all.
+  useEffect(() => {
+    if (savedCities.length === 0) {
+      setSavedCitiesWeather({});
+      return undefined;
+    }
+    let cancelled = false;
+    Promise.allSettled(
+      savedCities.map((c) =>
+        fetchWeather({ lat: c.lat, lon: c.lon }).then((res) => [
+          cityKey(c.lat, c.lon),
+          { temp: Math.round(res.main.temp), condition: res.weather[0].main },
+        ])
+      )
+    ).then((results) => {
+      if (cancelled) return;
+      const next = {};
+      results.forEach((r) => {
+        if (r.status === "fulfilled") {
+          const [key, glance] = r.value;
+          next[key] = glance;
+        }
+      });
+      setSavedCitiesWeather(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [savedCities]);
 
   const { gradient } = getWeatherTheme(weather.condition, weather.icon);
 
@@ -293,7 +368,24 @@ function App() {
             <span aria-hidden="true">📍</span> {locating ? "Locating…" : "Use My Location"}
           </button>
         </form>
-        <WeatherCard weather={weather} forecast={forecast} todaySlots={todaySlots} />
+        {saveError && (
+          <p className="SaveError" role="alert">
+            {saveError}
+          </p>
+        )}
+        <SavedCities
+          cities={savedCities}
+          weatherByCity={savedCitiesWeather}
+          onSelect={handleSelectSavedCity}
+          onRemove={handleRemoveSavedCity}
+        />
+        <WeatherCard
+          weather={weather}
+          forecast={forecast}
+          todaySlots={todaySlots}
+          isSaved={isCitySaved(savedCities, weather.lat, weather.lon)}
+          onToggleSave={handleToggleSave}
+        />
       </div>
     </div>
   );

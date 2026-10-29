@@ -73,6 +73,27 @@ const HeroPanel = styled.div`
   gap: 8px;
 `;
 
+const HeroTopRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+`;
+
+const SaveButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.6rem;
+  line-height: 1;
+  padding: 4px;
+  color: ${(props) => (props.saved ? "#f5a623" : "#c9c9d6")};
+
+  &:hover {
+    color: #f5a623;
+  }
+`;
+
 // Wraps WeatherDetails + AirQuality as one visual group. On mobile it's just
 // a divider below the hero, same as before; on wider screens it becomes its
 // own distinct side panel (background + rounded corners) rather than a
@@ -121,7 +142,12 @@ const Signature = styled.p`
   margin: 0;
 `;
 
-const WeatherCard = ({ weather, forecast, todaySlots }) => {
+// qi-trace: work-item="TODO(qi-trace): unresolved" acceptance-criteria="AC-1" risk-tier="low" test-coverage="src/components/WeatherCard/component.test.js"
+// No real work-item ID exists for this story (GitHub Issues are disabled on
+// the tracker repo) — flagged per qi-traceability.instructions.md rather
+// than fabricated. `isSaved`/`onToggleSave` are optional so existing callers
+// (and existing tests) are unaffected when they aren't passed.
+const WeatherCard = ({ weather, forecast, todaySlots, isSaved, onToggleSave }) => {
   const {
     temp,
     condition,
@@ -154,7 +180,20 @@ const WeatherCard = ({ weather, forecast, todaySlots }) => {
     <Card>
       <Heading>Hey Chum! Here's your forecast for...</Heading>
       <HeroPanel>
-        <Location city={city} state={country} />
+        <HeroTopRow>
+          <Location city={city} state={country} />
+          {typeof lat === "number" && typeof lon === "number" && onToggleSave && (
+            <SaveButton
+              type="button"
+              saved={isSaved}
+              aria-label={isSaved ? `Remove ${city} from saved cities` : `Save ${city}`}
+              aria-pressed={isSaved}
+              onClick={onToggleSave}
+            >
+              {isSaved ? "★" : "☆"}
+            </SaveButton>
+          )}
+        </HeroTopRow>
         <LocalTime timezoneOffsetSeconds={timezone} />
         <Icon condition={condition} icon={icon} />
         <Condition
