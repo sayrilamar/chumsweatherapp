@@ -1,0 +1,52 @@
+# =============================================================================
+# Assert.IQ — Team profile
+# =============================================================================
+# Read by /estimate-story for Output B (team fit) only. It never changes the
+# point range (Output A) — points stay a team-relative size.
+#
+# ROLE SLOTS ONLY — NO NAMES. A slot describes a seat on the team, not a
+# person. See .assert-iq/governance.md § 5 (Team profile).
+# =============================================================================
+
+schema_version: "1.0"
+
+purpose_notice: >-
+  Planning aid for refinement. Not for evaluating, ranking, or comparing
+  individuals.
+
+team:
+  name: "chumsweatherapp solo"
+  cadence_days: 14
+  last_reviewed: "2026-10-28"
+
+# Level vocabulary. Keep it to the levels your team actually uses.
+level_scale: [junior, mid, senior]
+
+# Elapsed-time ratio per level, relative to the team's historical cycle time
+# (1.0 = team median). Ignored at Early tier (current maturity.tier).
+level_time_ratios:
+  junior: 1.5
+  mid: 1.0
+  senior: 0.8
+
+# Single seat — solo project, one developer role.
+roles:
+  - slot: DEV_SENIOR_1
+    role: dev
+    level: senior
+    capacity_pct: 100
+    can_review: true
+    familiarity:
+      "src/": deep
+
+# When to recommend pairing. Not applicable with one slot, but kept for when
+# the team grows. Hotspot tiers come from /generate-hotspot-map.
+pairing_rules:
+  junior_pairs_on_hotspot_tiers: [CRITICAL]
+  pair_when_no_deep_familiarity: true
+
+# No other teams routinely waited on for a solo project.
+external_dependencies: []
+
+# No shared/queued environments for this project.
+environments: []
