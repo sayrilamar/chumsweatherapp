@@ -1,0 +1,1087 @@
+{
+  "version": "2.1.3",
+  "installed_at": "2026-10-29T00:19:37Z",
+  "mode": "committed",
+  "paths": [
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\COMPREHENSIVE-TEST-REPORT.md",
+      "scope": "workspace",
+      "sha": "f568bb961d905bc6481f1733fd13a2506ae1982daae3b4558474c22bc646d960"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\e2e-agent-parity.sh",
+      "scope": "workspace",
+      "sha": "767f0a73409fd7b1dcf4f55e63ac4fde6db236d63025cf0728198a8ac14d5c93"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\e2e-comprehensive-validation.sh",
+      "scope": "workspace",
+      "sha": "4a810fa68fd9d1c1b8cc32eb2b826e9b158d4883c36f55dcaf1e4c52c63de11a"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\e2e-hook-execution.py",
+      "scope": "workspace",
+      "sha": "5a7ba62a29e590f9188f0448eddee3fd5b14e1b3c92c2f4611f0d3d7bbd5e70e"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\e2e-install-trial.sh",
+      "scope": "workspace",
+      "sha": "6c8422bde760360ad1f1a0905a68c9a1fb7d8c94841831eda60c1d6d1f3114ca"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\e2e-specialist-orchestration.sh",
+      "scope": "workspace",
+      "sha": "a23736ea25f5f21060d9c1727b42b2370645746f02f72fe79b23d187833d01dc"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\e2e-uninstall-cleanup.sh",
+      "scope": "workspace",
+      "sha": "3d481f7d3576cfd41ea2d47bb2d04973c38d973e7bbe8ead38150639f3530627"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\e2e-v2-integration.sh",
+      "scope": "workspace",
+      "sha": "f6891addcace8b960cb8ce0a272bc5a383125d9d21f3941e7a2a40312124943c"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\e2e-version-consistency.sh",
+      "scope": "workspace",
+      "sha": "774b89f4420732e454554e5fe6e46896af897a9de4173264031c15496dcd9d32"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\FINAL-TESTING-SUMMARY.md",
+      "scope": "workspace",
+      "sha": "eef5dd72be5f7385c4e80efd265e45062abd31fb7d95c29643fc7e1c46c0026d"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\integration-calibration-library.sh",
+      "scope": "workspace",
+      "sha": "37e8968b988065d170a5a8fb1fd8f2e6751d74512b443f93ec52e761f3ecf1a8"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\integration-config-validation.sh",
+      "scope": "workspace",
+      "sha": "7ca3b23cb60c169f2844a3cb76aefcc7d7a188e554218ce72e1c925da4230f93"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\integration-doc-integrity.sh",
+      "scope": "workspace",
+      "sha": "497c3366801c68d209b0d80baaff453f3d87b9315989446bceb606b4fc003872"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\integration-dream-provenance.sh",
+      "scope": "workspace",
+      "sha": "4bd664fa321805182ad6249e7214d83b7b3a075c17eeeefca6c16202c64b1f09"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\integration-verdict-recording.sh",
+      "scope": "workspace",
+      "sha": "d68157a1fecafb49d71910af109af2e3dbdfb588692278fbb112f403cff9cd2c"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\run-all.sh",
+      "scope": "workspace",
+      "sha": "bd8b1f80de359d13bc53e3b565c344d44eaff986c015bd701aa24c876d0f30a2"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-agent-frontmatter.sh",
+      "scope": "workspace",
+      "sha": "f8cbe5f3dc41d7619f86be083539cc42e07498172209aa0e9e04afa1e9bd7109"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-audit-verdict.sh",
+      "scope": "workspace",
+      "sha": "9a16967347bfdcabd214d840d0efb5302bfde134378445b0138ac5a6baa636d1"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-calibration-basic.py",
+      "scope": "workspace",
+      "sha": "c63ce72e867d6f4ab90e2d97775f6cf294c238c65ab96eac28aba5ec1482910d"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-doc-parity.py",
+      "scope": "workspace",
+      "sha": "3e434fb7cdde7a5f15e0695bd9d44e70cef95baf543b287d5539865e869ba9b5"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-dreaming-gate.sh",
+      "scope": "workspace",
+      "sha": "b3f738b01ed9e27b41e3d08c5c1306b626bd9fc0346abf53bdb59999fa3a8b57"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-generated-docs-current.py",
+      "scope": "workspace",
+      "sha": "611d3a3e1a238ddaf0fcb945f771f33a7f025a2612102b5f7940493cecf4746a"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-gitignore-hygiene.sh",
+      "scope": "workspace",
+      "sha": "7b7a8bd47559e49bd3a1395c60b91139443b0fd950f424254ea139c6e23dcb91"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-hook-schema.py",
+      "scope": "workspace",
+      "sha": "664e8eea45fbb6a6be1c658b8cac8a75d3f6d03e2e41ff7963cd966ecb859937"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-install-settings-merge.sh",
+      "scope": "workspace",
+      "sha": "0cb30d0309d5495c9f6d782402e57c10c91dca6ec4cc058a123f26451182dd45"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-memory-hash-portability.py",
+      "scope": "workspace",
+      "sha": "d4b29557017d46cb2d9df5b596864a3abd3ff27fd9d5ddd7de006bce467cbd38"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-memory-sanity.py",
+      "scope": "workspace",
+      "sha": "ef870bdaed3d22291a59227032e20fbf56aaa35a3281b85a68f50faa59bb3720"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-script-portability.py",
+      "scope": "workspace",
+      "sha": "1dc03db8eb795b8870de5f90795ba8d342e98db01adfcdb05ad065be58071ff9"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-test-dependencies.sh",
+      "scope": "workspace",
+      "sha": "6fcd099d4766273517c8c29c6463c61da3e70d1a8601549d70811f3a10a3a37f"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-traceability-marker-parity.py",
+      "scope": "workspace",
+      "sha": "2f7841d9557e07cf72cd0536806e4ba1888a5f3ffe4afc3e181712bfc506c786"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-verdict-recorder-stdlib.py",
+      "scope": "workspace",
+      "sha": "6ca5909734951bfde3a215b459186e9afb029ffd0cd4b834321af85c779db6e5"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\unit-verdict-schema.sh",
+      "scope": "workspace",
+      "sha": "e3f2d61f2d8fd10aa45327772435043d1cdeca020fccbc3b9b55fa4bba97a0d3"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\automated\\lib\\aiq-test-lib.sh",
+      "scope": "workspace",
+      "sha": "ad556a05f8eef1f2e83decf7883849a744295d39e91f5ea24d7301750a6d73ff"
+    },
+    {
+      "action": "pre_install_backup",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.vscode\\mcp.json.assert-iq.pre-install",
+      "scope": "workspace",
+      "sha": "c72e52523940fdd16aa6a9b0b72976aa5aed52e2e2a19767e949e4b01358905c"
+    },
+    {
+      "action": "pre_install_backup",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\settings.json.assert-iq.pre-install",
+      "scope": "workspace",
+      "sha": "cac1aab2c8dfa2821d9c14e31faa5ea15620cb3d8742b50b8922c86a02f6e2ae"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\IMPLEMENTATION_SUMMARY.md",
+      "scope": "workspace",
+      "sha": "0b170a5219a41a7cc26f5dfe791545ff82ac414e7238cd1a140e0b5d9d27891a"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\kiro-harness.md",
+      "scope": "workspace",
+      "sha": "8e8d754cb02a79a0d56155f525ea5a05ee8f3a150cf09f2d6050efbddb926076"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\README_REVIEW_SUMMARY.md",
+      "scope": "workspace",
+      "sha": "e36c7be6cacc98fd1eaa26207fe44a168a9c3e80d3a3df8e7c857bbaeafc70ec"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\kiro-hooks.posix.template.json",
+      "scope": "workspace",
+      "sha": "ac3aa1e3e4dc66c0e51e222e4b9ccf1bff8d9acb6bc40095975b0f91cdc6122b"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\kiro-hooks.windows.template.json",
+      "scope": "workspace",
+      "sha": "25f199e617a199b6f93b564ffe590769ce0e41c651e7609b10ea10ad552a7067"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\steering\\00-assert-iq.md",
+      "scope": "workspace",
+      "sha": "99a54c692558d23d7e9d31b7bcf5c24aafdbadb8feddce242982bd3edadaf8fd"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\steering\\qi-foundation.md",
+      "scope": "workspace",
+      "sha": "0acd5d61bcb8a5b2f0796c1db2c9b86156882a4a98133fc9a417414ca547965b"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\steering\\qi-manual-test-design.md",
+      "scope": "workspace",
+      "sha": "b5ad4ca963b03fc6d58248ccbf45bd5a4be25bda45ed9c564787fb86e694d253"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\steering\\qi-oracle.md",
+      "scope": "workspace",
+      "sha": "2d4f23b7c8a33303331383f8e3bc9939f996caa49561bad54dc3ff85349dd95b"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\steering\\qi-signal-emission.md",
+      "scope": "workspace",
+      "sha": "cad8d0f3fa2fc491f010b4ef964b41d98a783e060f8e24efccba6c1595c27203"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\steering\\qi-test-design.md",
+      "scope": "workspace",
+      "sha": "ff7678523c72cd57810890fbf36620feb27cc5b3d5643b703c5b47cee6cc9303"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\steering\\qi-traceability.md",
+      "scope": "workspace",
+      "sha": "9e540f9712171d88f2fb06e0f21aecdc522d475e825b9214b3ec33d18e36ea35"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\agents\\assert-iq-plan.md",
+      "scope": "workspace",
+      "sha": "26461808b84e1e3401d9e632937983bfa5378478fd61a62d3b61297a4393b82b"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\agents\\assert-iq.md",
+      "scope": "workspace",
+      "sha": "995acc7ab78cec9c7751264cc308b989503772ea717452566f468eb876b572af"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\agents\\calibration-specialist.md",
+      "scope": "workspace",
+      "sha": "e23a4386f72f12e114af5c2b04479700db00a986c0d451c3fe918663d143f45b"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\agents\\coverage-analyst.md",
+      "scope": "workspace",
+      "sha": "330f08d9a4bfae0e1934a658e595e61651c8ac60711ed961c4c310e22c80fc63"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\agents\\flake-adjudicator.md",
+      "scope": "workspace",
+      "sha": "ada3ff55d6460ba6d0b31897f1aa6bfd74cbc248dcc2558170ab4d5e70c94e8a"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\agents\\hotspot-analyzer.md",
+      "scope": "workspace",
+      "sha": "3300f02250b589a16ba40a379c637e512eae9277c77b02e6094c9e35526ebab8"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\agents\\memory-curator.md",
+      "scope": "workspace",
+      "sha": "beb0ff2021d7fa1ba76fe2bd4707aff042ec9b19f2a7e901a9f4f92bb6a439af"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\agents\\oracle-grader.md",
+      "scope": "workspace",
+      "sha": "bfcfe1ee32f0f3c320f5c819c4a5c004c70370f116ddf4087f8f5c20104c591e"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\agents\\risk-scorer.md",
+      "scope": "workspace",
+      "sha": "c021e775fec6f998f259b6813d96d41922550c8c2a2e29d7dde39ebde9ba68a0"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\agents\\traceability-auditor.md",
+      "scope": "workspace",
+      "sha": "e091e5c0ce7628e281f5025e450ecc9f4441c226c15b65ceb129030e582794d9"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\settings\\mcp.json",
+      "scope": "workspace",
+      "sha": "6e81d15dde56a96008b5b9cc9084e5f834356c00e886514282359f6864d8ed3d"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\settings\\MCP.md",
+      "scope": "workspace",
+      "sha": "f1fe73b307c2d39622d6b8e27020503241abf3a37dd373edd39eaa0b6e2a169e"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\hooks\\assert-iq-dreaming.json",
+      "scope": "workspace",
+      "sha": "5d32cd1236c3c5cd49e9b694562fd000dc199d4d2558561996ce09823b8866c9"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.kiro\\skills",
+      "scope": "workspace",
+      "sha": ""
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\config.yaml",
+      "scope": "workspace",
+      "sha": "c10b3e3da5db559b8143f5c15d2b86753d6e2f35e4d7a50fe3b3e2be8a32bd2a"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\governance.md",
+      "scope": "workspace",
+      "sha": "e59f1178160fee4ae22baa3997ee9bbd15464c1d584c20d6e6cbcc3851e88ce4"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\maturity-profile.md",
+      "scope": "workspace",
+      "sha": "2c99edb31735c1b7218f18286f9287c41ef3fcfba091b4e2ce13dc253169918c"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\signal-schema.json",
+      "scope": "workspace",
+      "sha": "8213ba36b7bbcb627dd75f1b16a0853a0fbb3409d179265f2e284feea830c14a"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\SKILL_VERDICT_QUICKSTART.md",
+      "scope": "workspace",
+      "sha": "7db7d2cd247e0dcc968db20fc5fabd618fe60627d5eb49969868bfa90e2fdb66"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\team-profile.template.yaml",
+      "scope": "workspace",
+      "sha": "cc876c2994622c9c68add7097750d55e950be6c34154980bae497ed6dae89cbb"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\VERDICT_INTEGRATION_GUIDE.md",
+      "scope": "workspace",
+      "sha": "73294a40bcb6f007c42ad5c70d310a7ec18dd9753a9fda90938c06a08a8f4345"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\workspace-topology.md",
+      "scope": "workspace",
+      "sha": "93c4c50eced3c8ae9b6373c72734da93d03639ad1c8b570c22fd21b8e7db0dc8"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\agent-runs\\.gitignore",
+      "scope": "workspace",
+      "sha": "a87cc6527873db427a9516368f085d65efd3e2ced2d35d8d946872f0a9051b7c"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\agent-runs\\index.json",
+      "scope": "workspace",
+      "sha": "9f7909b2ccf2176dbba13ee46e597e1161ec5cdf783e4972856a80da37acfea6"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\analysis\\__init__.py",
+      "scope": "workspace",
+      "sha": "3369a04d7d03910b3cd7a02d06205009eb11ab375ec7319e1753b3534f4fce9a"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\analysis\\audit-verdict.sh",
+      "scope": "workspace",
+      "sha": "153f5207bacfa73a7c84f9426eaf307389d7dbae31465eb424475b2b96daa596"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\analysis\\calibration.py",
+      "scope": "workspace",
+      "sha": "b7968117c5a59dc356ae82314dc945e512290a15f77fa12ac445184d56822a1e"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\analysis\\dream-safety.py",
+      "scope": "workspace",
+      "sha": "f771a6cdae145d2a8bc633f58fbb34941e0c43a7f41edf2690841ba11ae5e202"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\analysis\\memory-sanity.py",
+      "scope": "workspace",
+      "sha": "181e45b587207b807879c7a0c93279b73f5bf690c61089a9ed5aa1d61b8b78a2"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\analysis\\verdict-recorder.py",
+      "scope": "workspace",
+      "sha": "69cc9afff301ffcdae1910734314ab4c33a4fea4b96a470b53e4106dc5abbeb8"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\business-metrics\\.gitignore",
+      "scope": "workspace",
+      "sha": "2b17a041e9f422013e00aff2ea9a462b49e0adbcda6e4d15ffacb41ee524d926"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\business-metrics\\baseline.json",
+      "scope": "workspace",
+      "sha": "a792987a2ae0d12713e28a246f703ff288f6c0dc9dafc9ec1f470521d793553d"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\estimates\\.gitignore",
+      "scope": "workspace",
+      "sha": "5f802535ac7948a4655788cb85f2097c26e120d60d56cfb48b617a30ef3fa9c5"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\examples\\skill-verdict-example.py",
+      "scope": "workspace",
+      "sha": "605aaf6a34add68cd3480d9265398cea8968acc547a57b35482d1d07274b3dea"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\oracles\\README.md",
+      "scope": "workspace",
+      "sha": "837077fe2af847a1cd8c0ae801a6f085885cbe9550c16ca89ac4f6dfd56f6b51"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\oracles\\rubrics\\.gitkeep",
+      "scope": "workspace",
+      "sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\oracles\\rubrics\\bug-report-v1.0.json",
+      "scope": "workspace",
+      "sha": "d8ea102e6e555c22b09339f83b7e2f83c51ced2c307f8db6f2e6ebf7ec114c73"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\oracles\\rubrics\\plan-v1.0.json",
+      "scope": "workspace",
+      "sha": "e8331909fa7e773cb0406bbb08080672d2644d188950d26564656efa5c0f86f6"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\oracles\\rubrics\\test-integration-v1.0.json",
+      "scope": "workspace",
+      "sha": "bbbcc72ea78d7d40ef5d219260f89b7b3a8c178cc9677ee27f348561c031965c"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\oracles\\rubrics\\test-unit-v1.0.json",
+      "scope": "workspace",
+      "sha": "a3b466f231ea860590df2567c216bae0c2a9cc86b89abd163122a6e9aa3dc147"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\oracles\\schemas\\.gitkeep",
+      "scope": "workspace",
+      "sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\oracles\\schemas\\rubric-v1.0.json",
+      "scope": "workspace",
+      "sha": "a00ec1012c1654947df7d5abc012ba2e3aec7f2e70ccfc7909d9c8549da997dd"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\tests\\_qi\\regression\\golden-corpus.jsonl",
+      "scope": "workspace",
+      "sha": "a9394c05ade952233b6c3298897a7a1475f3db780c40dc2d9ce0987cb1f6450c"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\verdicts\\.gitignore",
+      "scope": "workspace",
+      "sha": "2e88db5389aed25aa5166fb1aba5b0096bdd12fb8367e2404f3bdab6d691a8bc"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\verdicts\\index.json",
+      "scope": "workspace",
+      "sha": "dab0b111c574d0b961d6765f0f530e98315d1f9ff10785ae01c8858581031cfb"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\verdicts\\VERDICTS.md",
+      "scope": "workspace",
+      "sha": "26ba3e280f14f93d8bf29774a4f7805723801682f4843432ca644fbc2499d8d0"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\instructions\\qi-foundation.instructions.md",
+      "scope": "workspace",
+      "sha": "0ade2dc8b42313cf4edd51e1a833f4c6afce60486d714dbe0a602f9c829b0ed1"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\instructions\\qi-manual-test-design.instructions.md",
+      "scope": "workspace",
+      "sha": "78b29a6b22718d635ffd8cb5126fa8605d5716dcde89835ec9ab3b2aaaf44b51"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\instructions\\qi-oracle.instructions.md",
+      "scope": "workspace",
+      "sha": "cdfa93fee5e7c45792f0a217639086924b4a63a9465c87d4187b9dbc33299022"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\instructions\\qi-signal-emission.instructions.md",
+      "scope": "workspace",
+      "sha": "facb01dc00c78d735f19e6ec7c1f5a54471c63bd344141cb5dc46dcbf0a515cc"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\instructions\\qi-test-design.instructions.md",
+      "scope": "workspace",
+      "sha": "a4e7c5b8fb1e3f86a319acc5cb1d0378ee837ff232a8149f9888084b525e6034"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\instructions\\qi-traceability.instructions.md",
+      "scope": "workspace",
+      "sha": "24fd54bfa07516ebd27afcb265a97be8f6349697ac5c73210af8877b95b1b0a0"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\CLAUDE.md",
+      "scope": "workspace",
+      "sha": "ba34fe9f5eebe19784c55027523944ad7c84f65858fc032b846efd054e0a407c"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\copilot-instructions.md",
+      "scope": "workspace",
+      "sha": "d60ac3519bfddff48fe79991db5bbdeba75ef33723b958d10bf2eabbd2a570e5"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\AGENTS.md",
+      "scope": "workspace",
+      "sha": "4f7b0203e1af6b7e652028f9066a6e4e9f5fb41659cce01e027cdcaf8a713543"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.vscode\\settings.json",
+      "scope": "workspace",
+      "sha": "bc9ee0d61d71ff10fdd47fe61e91a45bc19a47ecdd43b55252a1bcce2a85d70b"
+    },
+    {
+      "action": "merged_settings",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.vscode\\mcp.json",
+      "scope": "workspace",
+      "sha": "fa9faca8579ad4b5adcbff5435c87507ff833d2b5d6660e070d452dd08afaf57"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\.claude-hooks.rendered.json",
+      "scope": "workspace",
+      "sha": "87c0afb102f6d3adc91118d6435a49661fd871757b8c4c3b2fa6468e9cbe9ca6"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\claude-hooks.posix.template.json",
+      "scope": "workspace",
+      "sha": "c1f44a6556a7415f45b70a1151115dada92972820f10141c1f8cd0ab97be7652"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\claude-hooks.windows.template.json",
+      "scope": "workspace",
+      "sha": "26f9905db0c5533d507002f0c4f0f1cfa6796c6170e0cdb7868df1da93a8054f"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\provenance.json",
+      "scope": "workspace",
+      "sha": "49b9abe96a4d82f743da0b4cba32b9297f4cd44172d058a1b54398f802400338"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\README.md",
+      "scope": "workspace",
+      "sha": "e33bc4e8ea5ceb97ed33267cff65a3a81b56da22b48bb6867ea71ceecfa4faed"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\session-events.template.json",
+      "scope": "workspace",
+      "sha": "471e3c4bc89fc82453f1b48a7cb259659ed9910366daa5136037c5dfcabd7714"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\.snapshots\\mem-20260909T132440Z.tar.gz",
+      "scope": "workspace",
+      "sha": "7a1bb1873d0907c3584391d1e8bf109f481565d22f726775804bbad34ad90c3f"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\scripts\\dream-gate.ps1",
+      "scope": "workspace",
+      "sha": "16bcee0ea89ede2588bd84402db0a9e95f276d3878d5a1b88f03d7b0998c6ae7"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\scripts\\dream-gate.sh",
+      "scope": "workspace",
+      "sha": "34c44f6af772004aa45f62fe3648c3329661736da96e4f2509eb3fb3f9b56ecd"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\scripts\\dream-record-session.ps1",
+      "scope": "workspace",
+      "sha": "7b0c812d1e837f1fd231a4bb4113731d148f88670a1678eac122e9cf63c74d48"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\scripts\\dream-record-session.sh",
+      "scope": "workspace",
+      "sha": "278170e833ba52398df2a35c1d505f93923ae2f71f3f49ebf61299ac588dc0eb"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\scripts\\lib\\dream-utils.ps1",
+      "scope": "workspace",
+      "sha": "94d66d780fed59b3dfa5961ffcec3a0ff9dd68d78b172a307689b1bd117d78df"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\scripts\\lib\\dream-utils.sh",
+      "scope": "workspace",
+      "sha": "933de8fc9a27878eb8861b0363339875fd50ce91d8b093e7cfd7ad26ba9ecf8c"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\scripts\\lib\\render-events.ps1",
+      "scope": "workspace",
+      "sha": "7ce89a99ed3963dee1551a9cfc06e1734e3be7befed156c59f80165c4fdc0d3d"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\scripts\\lib\\render-events.sh",
+      "scope": "workspace",
+      "sha": "8ffbb70f8a1e142b7bb1c9e2fa71ed765ae70ef6ab14fd90de7076a614ba0b9f"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\service\\dreaming_service.py",
+      "scope": "workspace",
+      "sha": "372c94f9c9cee3a98b235f83ef1d270c7f6b221b365717e0e208fde426c83663"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.assert-iq\\dreaming\\session-events.json",
+      "scope": "workspace",
+      "sha": "dad8f535723689967cdee617ad151cdc33500a8e6394d07a7596e0052abf6d81"
+    },
+    {
+      "action": "merged_hooks_key",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\settings.json",
+      "scope": "workspace",
+      "sha": "1d19f818e19e2a97fe14ecbadbb75fab40db760e4d52a63504666209993fcc82"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\agentic-heal\\SKILL.md",
+      "scope": "workspace",
+      "sha": "cf9f3cd3a17c7f017337e2055b408a9b3de21c09ea672769af6e27bc5a1b0645"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\analyze-escaped-defect\\SKILL.md",
+      "scope": "workspace",
+      "sha": "24cdf25f22d9ff1f63da91a858b496482ce06cc33e719bab470ce7b4ffab50d5"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\analyze-flaky-test\\SKILL.md",
+      "scope": "workspace",
+      "sha": "251da980f5ff9aaec3421e3df052e119dbf7de473f093eb5a21b943c52c60440"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\assert-iq-bootstrap\\SKILL.md",
+      "scope": "workspace",
+      "sha": "d5a3496fd043ef65f0b8a35f458fda40bda93f8b45fd6040b9e38bd43324c666"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\assert-iq-tailor\\SKILL.md",
+      "scope": "workspace",
+      "sha": "0f33c7a55a2997f6e7175b253bfac0bbb9cb835ed7c9af8ef406cc91dd7e46ed"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\calibration-report\\SKILL.md",
+      "scope": "workspace",
+      "sha": "bf70faaca12d9d34c08b51e8dfe205922b5ae7c6513bd254e1d103d2ba82b6f7"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\check-merge\\SKILL.md",
+      "scope": "workspace",
+      "sha": "101f4956a95b03d4718c0b4cf3cab80a11b01902e17c5b65991a41bba6589963"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\check-test-coverage\\SKILL.md",
+      "scope": "workspace",
+      "sha": "cc8b7319471cd47aedba32ad5b05846d749e5edd09e9004db36eda4313e9efdd"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\code-review\\SKILL.md",
+      "scope": "workspace",
+      "sha": "f9f8bd49587087a659a142615c77c0c0a8ce92225ca9583574fb6ca936e6899a"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\debug-ui-tests\\SKILL.md",
+      "scope": "workspace",
+      "sha": "25148d1d8fe7d8e05f117785634653230f3c0dbe708f95216525bb05a4008772"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\define-quality-rubric\\SKILL.md",
+      "scope": "workspace",
+      "sha": "a85e3d49d2d84741bf34fe072d7fd1676fd4e5c3bc4ef7b964fa2f42a50a1027"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\dream\\SKILL.md",
+      "scope": "workspace",
+      "sha": "e5066dcf34a2d3f0b20336013d73f322b902fdb53ecad15cdcbdb788c35fc5ba"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\estimate-story\\SKILL.md",
+      "scope": "workspace",
+      "sha": "0f1137f04b044bcc3565957c5dede86c307342324c11f23d26175db51110426b"
+    },
+    {
+      "action": "created",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\estimate-story\\references\\estimate-report-template.md",
+      "scope": "workspace",
+      "sha": "a35c5f2466981296e6e9cba7b44416481fd447fe8cabef37063a588aa561a268"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\eval-optimizer\\SKILL.md",
+      "scope": "workspace",
+      "sha": "22fcf602bd9a553dfa518fcaa940466aa9f7decc3564ee5946517868564eb775"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\eval-optimizer\\references\\grading-rubric.md",
+      "scope": "workspace",
+      "sha": "c81f28db08604580ce52f7c4aa55a9521d938c6ded365d7e3f379acba1d08010"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\eval-optimizer\\references\\optimization-principles.md",
+      "scope": "workspace",
+      "sha": "13d2a792b412a509dc370880f4bc324393b66ae9398e01e2ef1898d1f934d185"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\generate-automated-api-test\\SKILL.md",
+      "scope": "workspace",
+      "sha": "b17878b6632ef6fc3ac540b1c9718bd6c12245e0c72d8b824d39ba08e87e15ba"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\generate-automated-ui-test\\SKILL.md",
+      "scope": "workspace",
+      "sha": "f9cef7c69dcfcead8043bfa081cfae38815a666a2324dcd8c0f417a596904589"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\generate-automated-unit-test\\SKILL.md",
+      "scope": "workspace",
+      "sha": "d8d3e0914dae806fca0940b7188bcd46e35c96f1e267f86e829a56f1dd9957af"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\generate-bug-report\\SKILL.md",
+      "scope": "workspace",
+      "sha": "a2d599f3f2c777aa4f4c8d455f58d44098d013b50022460db29ca717d8a0c5f8"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\generate-exploratory-charter\\SKILL.md",
+      "scope": "workspace",
+      "sha": "37a959676ec1c020a55218d6182d6cc546808e26fad7de250be8e26fd57e185c"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\generate-hotspot-map\\SKILL.md",
+      "scope": "workspace",
+      "sha": "ab40fb27897c667238860982694be928aa0404c10d7fdef7f0f1227005598535"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\generate-manual-test-case\\SKILL.md",
+      "scope": "workspace",
+      "sha": "21857af7d5e45f167f3cab2ff6bb73afb38710968c0972fa471375e160402611"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\generate-test-data\\SKILL.md",
+      "scope": "workspace",
+      "sha": "3d31fc083a2929f81a152f7e0853530e5b25848282ef3e93e94a8dfb75fc6d36"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\generate-test-plan\\SKILL.md",
+      "scope": "workspace",
+      "sha": "6f8b2f626c8c0d529a7a658169ac5ff5c489349a5c68511f71cd4914a41649fd"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\generate-tests-from-ac\\SKILL.md",
+      "scope": "workspace",
+      "sha": "43f0a0e6fed1726046937cc655eaf9faaedc4791b411bf7506b0cf322a15d64b"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\generate-traceability-matrix\\SKILL.md",
+      "scope": "workspace",
+      "sha": "4471c9911e5ea10bab559926cc38fc1d9cd3a4343e29c547134584241bfba1f3"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\grade-with-rubric\\SKILL.md",
+      "scope": "workspace",
+      "sha": "404cc9836627fd065d453d0dfc0ae19ed826ea3c97fe601d607fa23c6bec0fbc"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\measure-qi-impact\\SKILL.md",
+      "scope": "workspace",
+      "sha": "75126354cb8fd3536d90389806bc50740643fc657fbffc3be68acd4ee4562a72"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\new-pull-request\\SKILL.md",
+      "scope": "workspace",
+      "sha": "deea8ab5ad5298c8cf0e76afea33d399d6c2b204264de481446e0439ee05637d"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\release-confidence\\SKILL.md",
+      "scope": "workspace",
+      "sha": "1382dad9662d375882b6390c440194304a7f6eb6560df45618de02c25007218d"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\release-confidence\\references\\release-confidence-template.html",
+      "scope": "workspace",
+      "sha": "9a4a1f2c38242359baba87255d7aa58875e08dda12144fdd400da209a028583a"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\review-acceptance-criteria\\SKILL.md",
+      "scope": "workspace",
+      "sha": "9f3bc0b531371bece8f00ced8e675561d0597b9e1180b21d75a34bd7eb7ee4d1"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\review-test-quality\\SKILL.md",
+      "scope": "workspace",
+      "sha": "045e897ee12811a400428e462704637d9269b78bf4c21b53169f2e3b9fe0a7a3"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\skills\\risk-assess-pr\\SKILL.md",
+      "scope": "workspace",
+      "sha": "71fe89bc22566e1c811e282beae7269a714e9dfdbb75d4cbc703e0d20cb62e80"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\agents\\Assert-IQ-PLAN.agent.md",
+      "scope": "workspace",
+      "sha": "b6911f7470377dbc94e428ea3127867890ea1ac01897d37f96d7f66b46e44960"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\agents\\Assert-IQ.agent.md",
+      "scope": "workspace",
+      "sha": "a8e51115d6abda325635f6c3109434c3ce968071f917819c1ade40972d3cc25d"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\agents\\specialists\\calibration-specialist.agent.md",
+      "scope": "workspace",
+      "sha": "62b98ae28224cb2ba0d5538f2e44b59a81d80ccfa1363a3352dd0c4d5cc30f98"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\agents\\specialists\\coverage-analyst.agent.md",
+      "scope": "workspace",
+      "sha": "d8256b6aaedc82828f960f07a4913ea832a17fd7aad2427ffa73efa05cd0c5a4"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\agents\\specialists\\flake-adjudicator.agent.md",
+      "scope": "workspace",
+      "sha": "d8b3b42b15364d2ab272c5adbe49ae6838fbf044962f510e377f4447d13da240"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\agents\\specialists\\hotspot-analyzer.agent.md",
+      "scope": "workspace",
+      "sha": "799f151136973618fcfb5ed33c0db846eea9611b15f3507608c9f1fee497563f"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\agents\\specialists\\memory-curator.agent.md",
+      "scope": "workspace",
+      "sha": "fc565ab3beaa71808691b1ac6533f3e6a97895a2d87f101926dca9af4f681182"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\agents\\specialists\\oracle-grader.agent.md",
+      "scope": "workspace",
+      "sha": "0c3d398d40918c3e9a1bde39e91bb312fe43d6a46678d907cddbc01796b5cdd3"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\agents\\specialists\\risk-scorer.agent.md",
+      "scope": "workspace",
+      "sha": "e1f0866579c62fb629459b314376c461b33519570d07824c2221f38c312c119a"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.github\\agents\\specialists\\traceability-auditor.agent.md",
+      "scope": "workspace",
+      "sha": "ab612e2144a08adc8d86495f1a1a717c23df1e41574208b03f26be4407770c3e"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\agents\\assert-iq-plan.md",
+      "scope": "workspace",
+      "sha": "de81c4c3700e1e31d72e5818db9f4d4b56dc4d14ffd7a88ada339fda3320c97f"
+    },
+    {
+      "action": "overwritten",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\agents\\assert-iq.md",
+      "scope": "workspace",
+      "sha": "7ff143b5755db7ced1554cea5e012cc76d67e1e9648cfd7459fbf443a5397069"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\agents\\grader.md",
+      "scope": "workspace",
+      "sha": "e0068ef88066ca060572e04fa388f9e4443423ce2eedcb1445c8a9d5653bfe5f"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\agents\\specialists\\calibration-specialist.md",
+      "scope": "workspace",
+      "sha": "bccf919f5c0d44ffaa8f839a32be6038304c2733b631c823d56ca12878296038"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\agents\\specialists\\coverage-analyst.md",
+      "scope": "workspace",
+      "sha": "e04306f7843019d917172fdf076418405ff2f3aa2274b60192841d5dfcbed07a"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\agents\\specialists\\flake-adjudicator.md",
+      "scope": "workspace",
+      "sha": "54236fe1942fa07f8ee65fcd120040e8cd527a836226930e5f208cb2f67ffda3"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\agents\\specialists\\hotspot-analyzer.md",
+      "scope": "workspace",
+      "sha": "829ba92ae37142fc5e496d7cf3d54081b80e85b594e7fa34d73c09b92271bafa"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\agents\\specialists\\memory-curator.md",
+      "scope": "workspace",
+      "sha": "b8e51dbfe2553b03a535a6ff8e32cd2bdbabb47c3263a02524d4ea0e6a0269c0"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\agents\\specialists\\oracle-grader.md",
+      "scope": "workspace",
+      "sha": "c312b92cfd28eea323d2ec1eaed5a3bd64bec53e39d680cfb6b70c73a1d6759d"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\agents\\specialists\\risk-scorer.md",
+      "scope": "workspace",
+      "sha": "dc5c13f1767dbb8f8bfbefbe64477d634de171c1cf52e8c3ae2fe6ac7804e27c"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\agents\\specialists\\traceability-auditor.md",
+      "scope": "workspace",
+      "sha": "9aecad4a809e675d0026176f71fe646e4c6b05910e647bc819f3694782d43f90"
+    },
+    {
+      "action": "unchanged_owned",
+      "path": "C:\\Users\\jarius.hayes\\chumsweatherapp\\.claude\\skills",
+      "scope": "workspace",
+      "sha": ""
+    }
+  ]
+}
