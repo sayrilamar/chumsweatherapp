@@ -19,12 +19,14 @@ env:
   QI_MATURITY_TIER: "higher"
   #
   # QI_COVERAGE_FLOOR: build fails below this line-coverage percentage.
-  # Seeded deliberately LOW so it cannot fail on first run — it was not
-  # measured. Local measurement is impossible on this machine (Node 25 vs
-  # react-scripts 3.4.1 / Jest 24 hangs); CI pins Node 18, which works.
-  # ACTION: read the "Coverage" summary in the first run of this workflow,
-  # then raise this to just under the real number and ratchet it upward.
-  QI_COVERAGE_FLOOR: "35"
+  # MEASURED on run 40798283798 (Node 18, this workflow): lines 99.31%
+  # (431/434), statements 98.95%, functions 99.10%, branches 96.90%.
+  # Set to 95 — roughly four points of headroom below the measured line
+  # coverage, so an ordinary small dip does not fail the build while a real
+  # regression still does. Ratchet upward as coverage holds.
+  # NOTE: the earlier figure of 36.78% in coverage-report.md is void; it
+  # predates five feature commits. Delete that file rather than trust it.
+  QI_COVERAGE_FLOOR: "95"
 
 jobs:
   test:
