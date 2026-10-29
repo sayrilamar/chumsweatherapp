@@ -6,11 +6,34 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  # ---------------------------------------------------------------------------
+  # Assert.IQ knobs — the two values you are likely to tune live here.
+  #
+  # QI_MATURITY_TIER must match .assert-iq/config.yaml > maturity.tier.
+  # It is duplicated here, not read from the file, because the Assert.IQ
+  # install is in `trial` mode: .assert-iq/** sits in .git/info/exclude and is
+  # therefore NOT present in a CI checkout. The step below reads config.yaml
+  # when it exists and falls back to this literal when it does not, so this
+  # stops being a duplicate once the install is graduated.
+  QI_MATURITY_TIER: "higher"
+  #
+  # QI_COVERAGE_FLOOR: build fails below this line-coverage percentage.
+  # Seeded deliberately LOW so it cannot fail on first run — it was not
+  # measured. Local measurement is impossible on this machine (Node 25 vs
+  # react-scripts 3.4.1 / Jest 24 hangs); CI pins Node 18, which works.
+  # ACTION: read the "Coverage" summary in the first run of this workflow,
+  # then raise this to just under the real number and ratchet it upward.
+  QI_COVERAGE_FLOOR: "35"
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history: the QI change layer measures churn against the base.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -21,27 +44,200 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Run tests with coverage
-        run: CI=true yarn test --coverage --watchAll=false
+        run: |
+          CI=true yarn test \
+            --coverage \
+            --watchAll=false \
+            --coverageReporters=json-summary \
+            --coverageReporters=text-summary \
+            --coverageReporters=lcov \
+            --json --outputFile=jest-results.json
 
-      # qi-signal-emission.instructions.md: publish a QI outcome payload at
-      # the end of every test run, per .assert-iq/signal-schema.json and the
-      # sink configured in .assert-iq/config.yaml > signals.sink (file, under
-      # ./.assert-iq/runs/). Required fields only: run_id, commit_sha,
-      # maturity_tier, plus branch/pr_id for context. No stack traces or
-      # secrets are included.
+      # Gate on coverage. Previously coverage was collected and then silently
+      # discarded — no threshold, no upload, no trend — so a change that
+      # weakened a test could not be distinguished from one that did not.
+      - name: Enforce coverage floor
+        if: always()
+        env:
+          FLOOR: ${{ env.QI_COVERAGE_FLOOR }}
+        run: |
+          if [ ! -f coverage/coverage-summary.json ]; then
+            echo "::warning::No coverage summary produced — skipping the floor check."
+            exit 0
+          fi
+          node -e '
+            const t = require("./coverage/coverage-summary.json").total;
+            const floor = Number(process.env.FLOOR);
+            const row = k => `${k.padEnd(11)} ${String(t[k].pct).padStart(6)}%  (${t[k].covered}/${t[k].total})`;
+            console.log("Coverage");
+            ["lines","statements","functions","branches"].forEach(k => console.log("  " + row(k)));
+            console.log(`\nFloor (QI_COVERAGE_FLOOR): ${floor}% lines`);
+            const pct = t.lines.pct;
+            console.log(`::notice::Line coverage ${pct}% (floor ${floor}%)`);
+            if (pct < floor) {
+              console.log(`::error::Line coverage ${pct}% is below the floor of ${floor}%.`);
+              process.exit(1);
+            }
+          '
+
+      # qi-signal-emission.instructions.md: publish a QI outcome payload at the
+      # end of every test run, per .assert-iq/signal-schema.json and the sink
+      # configured in .assert-iq/config.yaml > signals.sink (file, under
+      # ./.assert-iq/runs/).
+      #
+      # This step emits all five layer objects the schema requires under
+      # `layers`. Metrics this pipeline genuinely cannot observe are OMITTED and
+      # listed in that layer's `ungraded` array with a reason — never guessed.
+      # The schema makes every layer sub-metric optional and does not restrict
+      # additional properties, and the `hotspot.ungraded_signals` object sets
+      # the {signal, reason} precedent this follows.
+      #
+      # No stack traces and no secrets are included. Untrusted values (branch
+      # name, PR number) are passed via env, never interpolated into the shell.
       - name: Emit QI outcome signal
         if: always()
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+          BRANCH: ${{ github.ref_name }}
+          PR_ID: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          TESTS_OUTCOME: ${{ job.status }}
+          FALLBACK_TIER: ${{ env.QI_MATURITY_TIER }}
+          FLOOR: ${{ env.QI_COVERAGE_FLOOR }}
         run: |
           mkdir -p .assert-iq/runs
-          cat > ".assert-iq/runs/${{ github.run_id }}.json" <<EOF
-          {
-            "run_id": "${{ github.run_id }}",
-            "commit_sha": "${{ github.sha }}",
-            "branch": "${{ github.ref_name }}",
-            "pr_id": ${{ github.event.pull_request.number && format('"{0}"', github.event.pull_request.number) || 'null' }},
-            "maturity_tier": "mid"
-          }
-          EOF
+
+          # Resolve the diff base: PR base when available, else the previous
+          # push. Falls back to the first parent, then to an empty range.
+          BASE="$BASE_SHA"
+          if [ -z "$BASE" ]; then BASE="$PUSH_BEFORE"; fi
+          case "$BASE" in
+            ""|0000000000000000000000000000000000000000) BASE="" ;;
+          esac
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            BASE="$(git rev-parse --verify HEAD^ 2>/dev/null || true)"
+          fi
+
+          if [ -n "$BASE" ]; then
+            git diff --numstat "$BASE" HEAD > qi-numstat.txt 2>/dev/null || : > qi-numstat.txt
+          else
+            : > qi-numstat.txt
+          fi
+
+          # Prefer the tier from config.yaml; fall back to the workflow literal
+          # (see the env block for why both exist).
+          TIER="$FALLBACK_TIER"
+          if [ -f .assert-iq/config.yaml ]; then
+            FROM_CFG="$(sed -n 's/^[[:space:]]*tier:[[:space:]]*"\{0,1\}\([a-z]*\)"\{0,1\}.*/\1/p' \
+                        .assert-iq/config.yaml | head -1)"
+            case "$FROM_CFG" in
+              early|mid|higher) TIER="$FROM_CFG" ;;
+            esac
+          fi
+          export TIER
+
+          node -e '
+            const fs = require("fs");
+            const env = process.env;
+            const read = (p, d) => { try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return d; } };
+
+            // --- Protection: measured from jest + coverage ------------------
+            const cov  = read("./coverage/coverage-summary.json", null);
+            const jest = read("./jest-results.json", null);
+            const protection = { ungraded: [] };
+            if (jest && typeof jest.numTotalTests === "number") {
+              protection.tests_executed = jest.numTotalTests;
+            } else {
+              protection.ungraded.push({ signal: "tests_executed", reason: "jest_results_unavailable" });
+            }
+            if (cov && cov.total && cov.total.lines) {
+              protection.coverage_pct = cov.total.lines.pct;
+            } else {
+              protection.ungraded.push({ signal: "coverage_pct", reason: "coverage_summary_unavailable" });
+            }
+            // No production file in src/ carries a qi-trace marker, and commit
+            // history has PR numbers but no work-item IDs, so there is nothing
+            // to compute a percentage against.
+            protection.ungraded.push({
+              signal: "traceability_pct",
+              reason: "no_work_item_source: markers absent on production code"
+            });
+
+            // --- Change: measured from git ----------------------------------
+            const numstat = (() => { try { return fs.readFileSync("./qi-numstat.txt","utf8"); } catch { return ""; } })()
+              .split("\n").map(l => l.trim()).filter(Boolean);
+            const files = [], svc = new Set();
+            let churn = 0;
+            for (const line of numstat) {
+              const [a, d, ...rest] = line.split(/\s+/);
+              const path = rest.join(" ");
+              if (!path) continue;
+              files.push(path);
+              churn += (Number(a) || 0) + (Number(d) || 0);   // "-" for binary -> 0
+              const m = /^src\/(?:components\/([^/]+)|([^/]+))\//.exec(path);
+              if (m) svc.add(m[1] || m[2]);
+              else if (path.startsWith("src/")) svc.add("src(root)");
+              else if (path.startsWith(".github/")) svc.add("ci");
+            }
+            const change = {
+              files_changed: files.length,
+              churn_lines: churn,
+              services_touched: [...svc].sort(),
+              // No release calendar or freeze window is defined for this repo,
+              // so "late" has no reference point.
+              ungraded: [{ signal: "late_changes", reason: "no_release_calendar_defined" }]
+            };
+
+            // --- Trust: partially measurable --------------------------------
+            // blocked_count is real: jest reports skipped/pending tests.
+            const trust = { ungraded: [] };
+            if (jest && typeof jest.numPendingTests === "number") {
+              trust.blocked_count = jest.numPendingTests + (jest.numTodoTests || 0);
+            } else {
+              trust.ungraded.push({ signal: "blocked_count", reason: "jest_results_unavailable" });
+            }
+            // A single CI run cannot tell a flake from a failure, and no
+            // retry/history store is wired up.
+            trust.ungraded.push({ signal: "flaky_count", reason: "no_run_history_store" });
+            trust.ungraded.push({ signal: "env_uptime_pct", reason: "no_environment_monitoring" });
+
+            // --- Outcome: nothing is instrumented ---------------------------
+            const outcome = { ungraded: [
+              { signal: "defects_open",     reason: "no_issue_tracker_in_use" },
+              { signal: "escapes_30d",      reason: "no_escape_log" },
+              { signal: "telemetry_alerts", reason: "no_observability_configured" }
+            ]};
+
+            // --- Decision ---------------------------------------------------
+            // Deliberately never "green" from CI alone: Trust and Outcome are
+            // ungraded, so this pipeline has no basis for full confidence.
+            // red   = the suite failed.
+            // amber = the suite passed, but two of four layers are ungraded.
+            const failed = String(env.TESTS_OUTCOME).toLowerCase() === "failure";
+            const decision = {
+              release_confidence: failed ? "red" : "amber",
+              mitigation_required: failed,
+              ungraded_note: "never green from CI alone: trust + outcome layers unmeasured"
+            };
+
+            const payload = {
+              run_id: String(env.RUN_ID),
+              commit_sha: String(env.COMMIT_SHA),
+              branch: String(env.BRANCH || ""),
+              pr_id: env.PR_ID ? String(env.PR_ID) : null,
+              maturity_tier: env.TIER,
+              signal_type: "coverage.analysis",
+              layers: { change, protection, trust, outcome, decision }
+            };
+
+            const out = `.assert-iq/runs/${String(env.RUN_ID).replace(/[^A-Za-z0-9_.-]/g, "_")}.json`;
+            fs.writeFileSync(out, JSON.stringify(payload, null, 2) + "\n");
+            console.log(`Wrote ${out}`);
+            console.log(JSON.stringify(payload, null, 2));
+          '
+          rm -f qi-numstat.txt
 
       - name: Upload QI signal artifact
         if: always()
@@ -50,3 +246,12 @@ jobs:
           name: qi-signal-${{ github.run_id }}
           path: .assert-iq/runs/
           retention-days: 30
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ github.run_id }}
+          path: coverage/
+          retention-days: 30
+          if-no-files-found: warn
