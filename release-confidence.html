@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Release Confidence — 90-day window</title>
+<style>
+  :root{
+    --go:#107C10; --gomit:#CA5010; --hold:#D13438; --info:#0078D4;
+    --ink:#1b1b1f; --muted:#5c5c66; --line:#e3e3ea; --bg:#f4f6fb;
+    --card:#ffffff; --p1:#D13438; --p2:#CA5010; --shadow:0 2px 10px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 22px 60px;}
+  .hero{background:linear-gradient(135deg,#2b2d42 0%,#1f2233 100%);color:#fff;border-radius:16px;padding:30px 34px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  .hero::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(202,80,16,.35),transparent 70%);}
+  .hero .eyebrow{font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.75;margin:0 0 6px;}
+  .hero h1{margin:0;font-size:34px;font-weight:700;}
+  .hero .sub{margin:6px 0 0;opacity:.85;font-size:15px;}
+  .verdict{display:inline-flex;align-items:center;gap:10px;margin-top:18px;background:var(--gomit);color:#fff;padding:11px 20px;border-radius:40px;font-weight:700;font-size:18px;box-shadow:0 4px 14px rgba(202,80,16,.45);}
+  .verdict .dot{width:12px;height:12px;border-radius:50%;background:#fff;animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .verdict small{font-weight:500;opacity:.9;font-size:13px;}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px;font-size:13px;opacity:.9;}
+  .meta b{opacity:.7;font-weight:600;}
+  h2{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:34px 0 14px;font-weight:700;}
+  .grid{display:grid;gap:16px;}
+  .cols-2{grid-template-columns:1fr 1fr;}
+  .cols-4{grid-template-columns:repeat(4,1fr);}
+  .card{background:var(--card);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);border:1px solid var(--line);}
+  .headline{border-left:6px solid var(--gomit);background:#fff8f1;}
+  .headline h3{margin:0 0 6px;color:var(--gomit);font-size:17px;}
+  .headline p{margin:0;font-size:14.5px;}
+  .layer{position:relative;}
+  .layer .name{font-size:13px;color:var(--muted);font-weight:600;margin:0 0 8px;}
+  .layer .score{font-size:20px;font-weight:700;margin:0 0 8px;display:flex;align-items:center;gap:8px;}
+  .layer .ev{font-size:12.5px;color:var(--muted);margin:0;}
+  .pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:30px;color:#fff;}
+  .s-high{background:var(--go)} .s-med{background:var(--gomit)} .s-low{background:var(--hold)} .s-na{background:#6b6b76}
+  .barwrap{height:6px;background:var(--line);border-radius:6px;margin:10px 0 0;overflow:hidden;}
+  .bar{height:100%;border-radius:6px;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);}
+  thead th{background:#2b2d42;color:#fff;text-align:left;padding:11px 14px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;}
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tbody tr:nth-child(even){background:#fafbfe;}
+  tbody tr:last-child td{border-bottom:none;}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:6px;color:#fff;white-space:nowrap;}
+  .t-p1{background:var(--p1)} .t-p2{background:var(--p2)} .t-p3{background:#6b6b76}
+  .t-new{background:#8a8a94} .t-unassigned{background:#b5320e}
+  code{background:#eef0f6;padding:1px 6px;border-radius:5px;font-size:12px;color:#3a3a44;font-family:'SF Mono',Consolas,monospace;}
+  a.wi{text-decoration:none;}
+  a.wi code{cursor:pointer;color:var(--info);border-bottom:1px dotted var(--info);transition:background .15s;}
+  a.wi:hover code{background:#dceaf8;}
+  ul.flags{list-style:none;padding:0;margin:0;}
+  ul.flags li{padding:9px 0 9px 28px;position:relative;border-bottom:1px dashed var(--line);font-size:13.5px;}
+  ul.flags li:last-child{border-bottom:none;}
+  ul.flags li::before{content:"⚑";position:absolute;left:0;top:8px;color:var(--hold);}
+  .mit::before{content:"✓"!important;color:var(--go)!important;font-weight:700;}
+  .good{border-left:6px solid var(--go);background:#f3faf3;}
+  .good h3{color:var(--go);margin:0 0 6px;font-size:16px;}
+  .good p{margin:0;font-size:13.5px;}
+  .wc{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .wc .up{border-left:6px solid var(--go);background:#f3faf3;border-radius:10px;padding:14px 16px;font-size:13px;}
+  .wc .down{border-left:6px solid var(--hold);background:#fdf3f3;border-radius:10px;padding:14px 16px;font-size:13px;}
+  .wc b{display:block;margin-bottom:4px;}
+  .foot{margin-top:38px;text-align:center;color:var(--muted);font-size:12px;}
+  .badge{display:inline-block;background:#eef0f6;color:var(--muted);font-size:11px;padding:4px 11px;border-radius:20px;margin:2px;}
+  @media (max-width:820px){.cols-2,.cols-4,.wc{grid-template-columns:1fr;} .hero h1{font-size:26px;}}
+  @media print{body{background:#fff;} .card,table,.hero{box-shadow:none;} .verdict .dot{animation:none;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <p class="eyebrow">QI Release Confidence Report · chumsweatherapp</p>
+    <h1>90-Day Window &nbsp;<span style="opacity:.55;font-weight:400;font-size:22px;">(2026-07-29 → 2026-10-27)</span></h1>
+    <p class="sub">5 merged PRs · ZIP search &amp; live radar map · precipitation exposure · AQI/UV/pressure trend · 5-day forecast · responsive redesign &amp; real test coverage</p>
+    <div class="verdict" style="background:var(--gomit);"><span class="dot"></span>GO-WITH-MITIGATION <small>· 3 layers High, Outcome unable to assess</small></div>
+    <div class="meta">
+      <span><b>SCOPE</b> &nbsp;HEAD <code style="background:rgba(255,255,255,.15);color:#fff;">400975f</code> on master, PR #5</span>
+      <span><b>DATE</b> &nbsp;2026-10-27</span>
+      <span><b>SOURCES</b> &nbsp;git history · live coverage run · GitHub Actions · repo config</span>
+    </div>
+  </div>
+
+  <h2>The one thing to say in the room</h2>
+  <div class="card headline">
+    <h3>⚠ No production telemetry exists to verify this release once it's live</h3>
+    <p>Code quality signals are strong across the board (99% measured coverage, 7/8 green CI runs, no flaky/skipped tests), but this solo-maintainer app has zero error tracking, zero incident history, and no issue tracker — so the Outcome layer can't be independently confirmed. The gating conversation is whether a manual post-deploy smoke test is an acceptable stand-in for real telemetry on this release.</p>
+  </div>
+
+  <h2>Four-Layer Signal Model</h2>
+  <div class="grid cols-4">
+    <div class="card layer">
+      <p class="name">CHANGE RISK</p>
+      <p class="score">High <span class="pill s-high">HIGH</span></p>
+      <p class="ev">8 commits / 5 PRs, solo maintainer, single static SPA, no auth/payments/PII/migrations touched, fully reversible via Firebase redeploy.</p>
+      <div class="barwrap"><div class="bar" style="width:85%;background:var(--go)"></div></div>
+    </div>
+    <div class="card layer">
+      <p class="name">PROTECTION</p>
+      <p class="score">High <span class="pill s-high">HIGH</span></p>
+      <p class="ev">Live run: 98.95% stmts / 99.31% lines, 181/181 tests passing, 21 suites. Traceability 0% but deliberately dormant (no tracker configured).</p>
+      <div class="barwrap"><div class="bar" style="width:92%;background:var(--go)"></div></div>
+    </div>
+    <div class="card layer">
+      <p class="name">SIGNAL TRUST</p>
+      <p class="score">High <span class="pill s-high">HIGH</span></p>
+      <p class="ev">GitHub Actions: 7/8 runs green; sole failure pre-dates this window's feature work. No skip/quarantine markers anywhere.</p>
+      <div class="barwrap"><div class="bar" style="width:85%;background:var(--go)"></div></div>
+    </div>
+    <div class="card layer">
+      <p class="name">OUTCOME EVIDENCE</p>
+      <p class="score">Unable to assess <span class="pill s-na">N/A</span></p>
+      <p class="ev">No telemetry/error-tracking (release.outcome_sources: none). No tracker, so no escape data. No oracle verdicts recorded yet.</p>
+      <div class="barwrap"><div class="bar" style="width:30%;background:var(--hold)"></div></div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:24px;">Work-Item Evidence Ledger</h2>
+  <table>
+    <thead><tr style="background:var(--info);color:#fff;">
+      <th style="padding:6px 10px;text-align:left;">Type</th>
+      <th style="padding:6px 10px;text-align:right;">In Scope</th>
+      <th style="padding:6px 10px;text-align:right;">Assessed</th>
+      <th style="padding:6px 10px;text-align:right;">Unverified</th>
+      <th style="padding:6px 10px;text-align:left;">Evidence Links / Notes</th>
+    </tr></thead>
+    <tbody>
+      <tr style="background:#ffffff;">
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">Epic</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">None in scope — tracker.type = "none" (solo project, no tracker by design)</td>
+      </tr>
+      <tr style="background:#f5f9fc;">
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">Feature</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">None in scope — same reason</td>
+      </tr>
+      <tr style="background:#ffffff;">
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">User Story</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">None in scope — same reason</td>
+      </tr>
+      <tr style="background:#f5f9fc;">
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">Bug</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">None in scope — same reason</td>
+      </tr>
+      <tr style="background:#ffffff;">
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">Task</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">—</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">None in scope — same reason</td>
+      </tr>
+      <tr style="background:#f5f9fc;">
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">PR</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">5</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">5</td>
+        <td style="padding:6px 10px;text-align:right;border-bottom:1px solid #c7e0f4;">0</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #c7e0f4;">
+          <a class="wi" href="https://github.com/sayrilamar/chumsweatherapp/pull/1" target="_blank" rel="noopener"><code>#1</code></a> CI workflow ·
+          <a class="wi" href="https://github.com/sayrilamar/chumsweatherapp/pull/2" target="_blank" rel="noopener"><code>#2</code></a> test coverage ·
+          <a class="wi" href="https://github.com/sayrilamar/chumsweatherapp/pull/3" target="_blank" rel="noopener"><code>#3</code></a> redesign/autocomplete ·
+          <a class="wi" href="https://github.com/sayrilamar/chumsweatherapp/pull/4" target="_blank" rel="noopener"><code>#4</code></a> forecast+fix ·
+          <a class="wi" href="https://github.com/sayrilamar/chumsweatherapp/pull/5" target="_blank" rel="noopener"><code>#5</code></a> AQI/UV/precip/ZIP/map — all merged, all CI-green
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:var(--muted);margin-top:8px;"><b>Completeness gate:</b> No tracker exists in this repo by design — all delivery units are PRs/commits, and all 5 PRs in window are accounted for with merge + CI evidence.</p>
+
+  <div class="grid cols-2" style="margin-top:18px;">
+    <div>
+      <h2 style="margin-top:0;">Red Flags</h2>
+      <div class="card">
+        <ul class="flags">
+          <li>Coverage jumped 0%→54%→100% on 2026-08-28 in a single day — but this was the <b>first-ever</b> real test bootstrap (prior state was unmodified CRA boilerplate), not a pre-release inflation; coverage stayed 94–100% for every commit afterward.</li>
+          <li>Several new test files landed on 2026-09-02/03 (~19% of the suite) — each paired 1:1 with its feature in the same commit, under the 30% threshold that would force a Trust downgrade.</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h2 style="margin-top:0;">Mitigating Factor</h2>
+      <div class="card good">
+        <h3>✓ Every feature PR ships its own tests, in the same commit</h3>
+        <p>All 5 merged PRs across the window add tests alongside the feature code they cover — not retrofitted later. Combined with 7/8 green CI runs and zero skip/quarantine markers, this is a strong, consistent Trust signal across the whole 90 days.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Mitigations Required — to hold GO</h2>
+  <table>
+    <thead><tr><th>#</th><th>Mitigation</th><th>Owner</th><th>By When</th><th>Addresses</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Manual smoke pass on deployed Firebase URL (city search, ZIP search, map tiles, AQI/UV/pressure panels)</td><td>Jarius Hayes</td><td>At deploy time</td><td>Outcome — substitutes for missing telemetry on this release</td></tr>
+      <tr><td>2</td><td>Add lightweight client-side error visibility (free-tier Sentry, or capture window.onerror)</td><td>Jarius Hayes</td><td>Next iteration</td><td>Outcome — closes the telemetry gap going forward</td></tr>
+      <tr><td>3</td><td>Document the Firebase Hosting rollback steps in README or governance.md</td><td>Jarius Hayes</td><td>Before next release</td><td>Operational readiness — rollback currently implicit, not written down</td></tr>
+    </tbody>
+  </table>
+
+  <h2>What Would Change the Verdict</h2>
+  <div class="wc">
+    <div class="up"><b>↑ Upgrades verdict</b>Wiring any outcome source (even minimal Sentry/Crashlytics) and confirming zero errors post-deploy moves Outcome to High → plain GO.</div>
+    <div class="down"><b>↓ Drops to HOLD</b>A live-measured coverage regression below 80% on a touched file, a red CI run on current HEAD, or an unmitigated irreversible change (none found this window) would flip this to HOLD.</div>
+  </div>
+
+  <h2>Explicit Risk Acceptance — capture named sign-off</h2>
+  <div class="card">
+    <p style="margin:0 0 10px;font-size:13.5px;">▢ &nbsp;No production telemetry on a user-facing release — accepted by <b>Jarius Hayes</b> — rationale: hobby project, zero-cost deploy constraints; mitigated by manual smoke test.</p>
+    <p style="margin:0;font-size:13.5px;">▢ &nbsp;No cross-functional review on any of the 5 merged PRs (self-merged, solo maintainer) — accepted by <b>Jarius Hayes</b> — rationale: no team exists at this tier; documented in maturity-profile.md.</p>
+  </div>
+
+  <div class="foot">
+    <div>
+      <span class="badge">Quality = Velocity × Customer Satisfaction × System Resilience</span>
+      <span class="badge">Maturity tier: mid</span>
+      <span class="badge">Partial-signal mode: Outcome layer unverified, assumed Medium</span>
+    </div>
+    <p style="margin-top:10px;">Generated by Assert.IQ · Release Confidence · Verdict ID 7597687d-5e18-4c62-b1e4-943ff0528138 · AI-assisted draft — human review gate applies before any release decision.</p>
+  </div>
+
+</div>
+</body>
+</html>
